@@ -26,12 +26,6 @@ MonoBehaviour:
     UiConfigsType:
     - Presenters.HudPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-    - Presenters.AutomatePopUpPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    - Presenters.AnimalCardsPanelPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-    - Presenters.TreeCardsPanelPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
   - SetId: 1
     UiConfigsType:
     - Presenters.HudPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
