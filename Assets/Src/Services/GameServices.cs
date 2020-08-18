@@ -1,8 +1,6 @@
 using GameLovers.Services;
 using GameLovers.UiService;
 using Logic;
-using UnityEngine;
-using UnityEngine.InputSystem.UI;
 
 namespace Services
 {
@@ -18,8 +16,8 @@ namespace Services
 	{
 		/// <inheritdoc cref="IMessageBrokerService"/>
 		IMessageBrokerService MessageBrokerService { get; }
-		/// <inheritdoc cref="ICommandService"/>
-		ICommandService CommandService { get; }
+		/// <inheritdoc cref="ICommandService{T}"/>
+		ICommandService<IGameLogic> CommandService { get; }
 		/// <inheritdoc cref="IPoolService"/>
 		IPoolService PoolService { get; }
 		/// <inheritdoc cref="IUiService"/>
@@ -30,6 +28,10 @@ namespace Services
 		ITimeService TimeService { get; }
 		/// <inheritdoc cref="ICoroutineService"/>
 		ICoroutineService CoroutineService { get; }
+		/// <inheritdoc cref="IDataSaver"/>
+		IDataSaver DataSaverService { get; }
+		/// <inheritdoc cref="IAssetResolverService"/>
+		IAssetResolverService AssetResolverService { get; }
 		/// <inheritdoc cref="IWorldObjectReferenceService"/>
 		IWorldObjectReferenceService WorldObjectReferenceService { get; }
 	}
@@ -40,7 +42,7 @@ namespace Services
 		/// <inheritdoc />
 		public IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc />
-		public ICommandService CommandService { get; }
+		public ICommandService<IGameLogic> CommandService { get; }
 		/// <inheritdoc />
 		public IPoolService PoolService { get; }
 		/// <inheritdoc />
@@ -52,18 +54,25 @@ namespace Services
 		/// <inheritdoc />
 		public ICoroutineService CoroutineService { get; }
 		/// <inheritdoc />
+		public IDataSaver DataSaverService { get; }
+		/// <inheritdoc />
+		public IAssetResolverService AssetResolverService { get; }
+
+		/// <inheritdoc />
 		public IWorldObjectReferenceService WorldObjectReferenceService { get; }
 
-		public GameServices(IMessageBrokerService messageBrokerService, ITimeService timeService, IGameLogic gameLogic,
-			IWorldObjectReferenceService worldObjectReference)
+		public GameServices(IMessageBrokerService messageBrokerService, ITimeService timeService, IDataSaver dataSaver,
+		                    IGameLogic gameLogic, IWorldObjectReferenceService worldObjectReference)
 		{
 			MessageBrokerService = messageBrokerService;
 			TimeService = timeService;
 			WorldObjectReferenceService = worldObjectReference;
+			DataSaverService = dataSaver;
 			
-			CommandService = new CommandService(gameLogic);
+			CommandService = new CommandService<IGameLogic>(gameLogic);
 			PoolService = new PoolService();
-			UiService = new UiService();
+			AssetResolverService = new AssetResolverService();
+			UiService = new UiService(new UiAssetLoader());
 			TickService =  new TickService();
 			CoroutineService = new CoroutineService();
 		}

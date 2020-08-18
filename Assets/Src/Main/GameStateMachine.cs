@@ -1,4 +1,5 @@
-using GameLovers.ConfigsContainer;
+using GameLovers.GoogleSheetImporter;
+using GameLovers.Services;
 using GameLovers.Statechart;
 using GameLovers.UiService;
 using Ids;
@@ -13,7 +14,7 @@ namespace Main
 	public class GameStateMachine : IStatechart
 	{
 		private readonly IStatechart _stateMachine;
-		private readonly IGameInternalLogic _gameLogic;
+		private readonly IGameLogicInit _gameLogic;
 		private readonly IGameServices _services;
 		private readonly LoadingState _loadingState;
 
@@ -24,14 +25,11 @@ namespace Main
 			set => _stateMachine.LogsEnabled = value;
 		}
 
-		public GameStateMachine(IGameInternalLogic gameLogic, IGameServices services)
+		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services)
 		{
-			var configsProvider = (ConfigsProvider) gameLogic.ConfigsProvider;
-			var uiService = (UiService) services.UiService;
-			
 			_gameLogic = gameLogic;
 			_services = services;
-			_loadingState = new LoadingState(configsProvider, uiService);
+			_loadingState = new LoadingState(gameLogic.ConfigsProvider, _services);
 			_stateMachine = new Statechart(Setup);
 		}
 

@@ -1,21 +1,22 @@
 {
   "dependencies": {
     "com.gamelovers.assetloader": "https://github.com/CoderGamester/com.gamelovers.assetloader.git",
-    "com.gamelovers.asyncawait": "https://github.com/CoderGamester/com.gamelovers.asyncawait.git",
     "com.gamelovers.configscontainer": "https://github.com/CoderGamester/com.gamelovers.configscontainer.git",
     "com.gamelovers.googlesheetimporter": "https://github.com/CoderGamester/com.gamelovers.googlesheetimporter.git",
+    "com.gamelovers.nativeui": "https://github.com/CoderGamester/com.gamelovers.nativeui.git",
+    "com.gamelovers.notificationservice": "https://github.com/CoderGamester/com.gamelovers.notificationservice.git",
     "com.gamelovers.removeemptyfolders": "https://github.com/CoderGamester/com.gamelovers.removeemptyfolders.git",
     "com.gamelovers.services": "https://github.com/CoderGamester/com.gamelovers.services.git",
     "com.gamelovers.statechart": "https://github.com/CoderGamester/com.gamelovers.statechart.git",
     "com.gamelovers.uiservice": "https://github.com/CoderGamester/com.gamelovers.uiservice.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
-    "com.unity.addressables": "1.7.5",
-    "com.unity.device-simulator": "2.2.1-preview",
+    "com.unity.addressables": "1.13.1",
+    "com.unity.device-simulator": "2.2.3-preview",
     "com.unity.ide.rider": "1.1.4",
-    "com.unity.inputsystem": "1.0.0-preview.6",
+    "com.unity.inputsystem": "1.0.0",
     "com.unity.mobile.android-logcat": "1.1.1",
-    "com.unity.nuget.newtonsoft-json": "2.0.0-preview",
+    "com.unity.nuget.newtonsoft-json": "2.0.0",
     "com.unity.textmeshpro": "2.0.1",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
@@ -49,39 +50,5 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  },
-  "lock": {
-    "com.gamelovers.assetloader": {
-      "revision": "HEAD",
-      "hash": "809ee30c45d2df61e10dca123886ce3108dea343"
-    },
-    "com.gamelovers.asyncawait": {
-      "revision": "HEAD",
-      "hash": "f3415e7b5d5a81cb469b6a0c632af3bf9c203c58"
-    },
-    "com.gamelovers.configscontainer": {
-      "revision": "HEAD",
-      "hash": "ef1480b12d2b55096c1e6e7d1865f76e93271e21"
-    },
-    "com.gamelovers.googlesheetimporter": {
-      "revision": "HEAD",
-      "hash": "fccafa8ce2b110a9e12a52eb7d9f8b93872b5c48"
-    },
-    "com.gamelovers.removeemptyfolders": {
-      "revision": "HEAD",
-      "hash": "a160e357dbdfb18b58680e47360957cefd3c3958"
-    },
-    "com.gamelovers.services": {
-      "revision": "HEAD",
-      "hash": "c4295f09661419aa902d59ee856594c64c8802d7"
-    },
-    "com.gamelovers.statechart": {
-      "revision": "HEAD",
-      "hash": "edab931a1ef51e7bd8f77b693bd99dc4125bb168"
-    },
-    "com.gamelovers.uiservice": {
-      "revision": "HEAD",
-      "hash": "a7ab646e5a2b9d23d7d7ad82eadead2d3d079f2f"
-    }
   }
 }

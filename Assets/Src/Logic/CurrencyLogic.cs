@@ -1,3 +1,5 @@
+using System;
+using Data;
 using Events;
 using GameLovers;
 using Ids;
@@ -17,6 +19,10 @@ namespace Logic
 		/// Requests the player's current <seealso cref="GameId.HardCurrency"/> amount
 		/// </summary>
 		int HardCurrencyAmount { get; }
+		/// <summary>
+		/// Requests the player's <seealso cref="GameIdGroup.Currency"/> <see cref="IObservableDictionary{TKey,TValue}"/>
+		/// </summary>
+		IObservableDictionaryReader<GameId, int> Currencies { get; }
 	}
 
 	/// <inheritdoc />
@@ -43,20 +49,22 @@ namespace Logic
 	/// <inheritdoc />
 	public class CurrencyLogic : ICurrencyLogic
 	{
-		private readonly IGameInternalLogic _gameLogic;
-		private readonly IObservableDictionary<GameId, int> _data;
+		private readonly IGameLogic _gameLogic;
+		private readonly IObservableDictionary<GameId, int> _currencies;
 
 		/// <inheritdoc />
-		public int SoftCurrencyAmount => _data[GameId.SoftCurrency];
+		public int SoftCurrencyAmount => _currencies[GameId.SoftCurrency];
 		/// <inheritdoc />
-		public int HardCurrencyAmount => _data[GameId.HardCurrency];
-		
+		public int HardCurrencyAmount => _currencies[GameId.HardCurrency];
+		/// <inheritdoc />
+		public IObservableDictionaryReader<GameId, int> Currencies => _currencies;
+
 		private CurrencyLogic() {}
 
-		public CurrencyLogic(IGameInternalLogic gameLogic, IObservableDictionary<GameId, int> data)
+		public CurrencyLogic(IGameLogic gameLogic, PlayerData playerData)
 		{
 			_gameLogic = gameLogic;
-			_data = data;
+			_currencies = new ObservableDictionary<GameId, int>(playerData.Currencies);
 		}
 
 		/// <inheritdoc />
@@ -67,10 +75,10 @@ namespace Logic
 				throw new LogicException($"The given game Id {currency} is not of {GameIdGroup.Currency} type");
 			}
 			
-			var oldAmount = _data[currency];
+			var oldAmount = _currencies[currency];
 			var newAmount = oldAmount + amount;
 			
-			_data[currency] = newAmount;
+			_currencies[currency] = newAmount;
 
 			PublishCurrencyEvent(currency, oldAmount, newAmount);
 		}
@@ -83,7 +91,7 @@ namespace Logic
 				throw new LogicException($"The given game Id {currency} is not of {GameIdGroup.Currency} type");
 			}
 			
-			var oldAmount = _data[currency];
+			var oldAmount = _currencies[currency];
 			var newAmount = oldAmount + amount;
 			
 			if (oldAmount - amount < 0)
@@ -92,7 +100,7 @@ namespace Logic
 				                                    $"{oldAmount.ToString()}");
 			}
 			
-			_data[currency] = newAmount;
+			_currencies[currency] = newAmount;
 
 			PublishCurrencyEvent(currency, oldAmount, newAmount);
 		}

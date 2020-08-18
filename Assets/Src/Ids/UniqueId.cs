@@ -112,26 +112,26 @@ namespace Ids
 
 	/// <inheritdoc />
 	/// <remarks>
-	/// Enhances the <see cref="IIdList"/> with a defined <see cref="UniqueId"/> key type
+	/// Enhances the <see cref="IObservableIdList"/> with a defined <see cref="UniqueId"/> key type
 	/// </remarks>
-	public interface IUniqueIdList : IIdList
+	public interface IUniqueIdList : IObservableIdList
 	{
 	}
 	
-	/// <inheritdoc cref="IUniqueIdList" />
-	public interface IUniqueIdListReader<T> : IIdListReader<UniqueId, T>, IUniqueIdList
+	/// <inheritdoc cref="IObservableIdList" />
+	public interface IUniqueIdListReader<T> : IObservableIdListReader<UniqueId, T>, IUniqueIdList
 		where T : struct
 	{
 	}
 
-	/// <inheritdoc cref="IUniqueIdList" />
-	public interface IUniqueIdList<T> : IIdList<UniqueId, T>, IUniqueIdListReader<T>
+	/// <inheritdoc cref="IObservableIdList" />
+	public interface IUniqueIdList<T> : IObservableIdList<UniqueId, T>, IUniqueIdListReader<T>
 		where T : struct
 	{
 	}
 
-	/// <inheritdoc cref="IUniqueIdList" />
-	public class UniqueIdList<T> : IdList<UniqueId, T>, IUniqueIdList<T> 
+	/// <inheritdoc cref="IObservableIdList" />
+	public class UniqueIdList<T> : ObservableIdList<UniqueId, T>, IUniqueIdList<T> 
 		where T : struct
 	{
 		public UniqueIdList(Func<T, UniqueId> referenceIdResolver, IList<T> list) : base(referenceIdResolver, list)

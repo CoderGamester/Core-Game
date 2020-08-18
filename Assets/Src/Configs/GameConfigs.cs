@@ -1,6 +1,6 @@
 using System;
 using GameLovers;
-using GameLovers.ConfigsContainer;
+using GameLovers.GoogleSheetImporter;
 using UnityEngine;
 
 namespace Configs

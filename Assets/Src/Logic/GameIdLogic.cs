@@ -1,3 +1,4 @@
+using System;
 using Data;
 using GameLovers;
 using Ids;
@@ -11,7 +12,7 @@ namespace Logic
 	public interface IGameIdDataProvider
 	{
 		/// <summary>
-		/// Requests the Data dictionary in a readonly form
+		/// Requests the <see cref="IObservableDictionary{TKey,TValue}"/> representation in readonly form of the <see cref="GameId"/> data
 		/// </summary>
 		IObservableDictionaryReader<UniqueId, GameId> Data { get; }
 
@@ -21,41 +22,47 @@ namespace Logic
 		/// <exception cref="LogicException">
 		/// Thrown if there is no element with the given <paramref name="gameId"/>
 		/// </exception>
-		UniqueId GetData(GameId gameId);
+		UniqueId GetUniqueId(GameId gameId);
 
 		/// <summary>
 		/// Requests the <see cref="UniqueId"/> for the first element found with the given <paramref name="gameId"/>
 		/// Returns true if the element was found
 		/// </summary>
-		bool TryGetData(GameId gameId, out UniqueId data);
+		bool TryGetUniqueId(GameId gameId, out UniqueId data);
 	}
 
 	/// <inheritdoc />
 	public interface IGameIdLogic : IGameIdDataProvider
 	{
+		/// <summary>
+		/// Requests the <see cref="IObservableDictionary{TKey,TValue}"/> representation of the <see cref="GameId"/> data
+		/// </summary>
+		new IObservableDictionary<UniqueId, GameId> Data { get; }
 	}
 	
 	/// <inheritdoc />
 	public class GameIdLogic : IGameIdLogic
 	{
-		private readonly IGameInternalLogic _gameLogic;
-		private readonly IObservableDictionary<UniqueId, GameId> _data;
-
+		private readonly IGameLogic _gameLogic;
+		
 		/// <inheritdoc />
-		public IObservableDictionaryReader<UniqueId, GameId> Data => _data;
+		IObservableDictionaryReader<UniqueId, GameId> IGameIdDataProvider.Data => Data;
+		/// <inheritdoc />
+		public IObservableDictionary<UniqueId, GameId> Data { get; }
 
 		private GameIdLogic() {}
 
-		public GameIdLogic(IGameInternalLogic gameLogic, IObservableDictionary<UniqueId, GameId> data)
+		public GameIdLogic(IGameLogic gameLogic, PlayerData playerData)
 		{
 			_gameLogic = gameLogic;
-			_data = data;
+			
+			Data = new ObservableDictionary<UniqueId, GameId>(playerData.GameIds);
 		}
 
 		/// <inheritdoc />
-		public UniqueId GetData(GameId gameId)
+		public UniqueId GetUniqueId(GameId gameId)
 		{
-			if (TryGetData(gameId, out var data))
+			if (TryGetUniqueId(gameId, out var data))
 			{
 				return data;
 			}
@@ -64,11 +71,9 @@ namespace Logic
 		}
 
 		/// <inheritdoc />
-		public bool TryGetData(GameId gameId, out UniqueId data)
+		public bool TryGetUniqueId(GameId gameId, out UniqueId data)
 		{
-			var dic = _data.GetDictionary();
-
-			foreach (var pair in dic)
+			foreach (var pair in Data)
 			{
 				if (pair.Value == gameId)
 				{

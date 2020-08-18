@@ -1,5 +1,6 @@
 ﻿using Data;
 using Events;
+using GameLovers.AssetLoader;
 using GameLovers.Services;
 using Logic;
 using Newtonsoft.Json;
@@ -25,13 +26,13 @@ namespace Main
 		{
 			var messageBroker = new MessageBrokerService();
 			var timeService = new TimeService();
-			var dataProvider = new DataProviderLogic();
+			var dataService = new DataService();
 			var worldObjectReference = new WorldObjectReferenceService(_inputSystem, _mainCamera);
+
+			LoadGameData(timeService, dataService);
 			
-			LoadData(dataProvider, timeService);
-			
-			_gameLogic = new GameLogic(messageBroker, dataProvider, timeService);
-			_gameServices = new GameServices(messageBroker, timeService, _gameLogic, worldObjectReference);
+			_gameLogic = new GameLogic(messageBroker, timeService, dataService);
+			_gameServices = new GameServices(messageBroker, timeService, dataService, _gameLogic, worldObjectReference);
 			
 			MainInstaller.Bind<IGameDataProvider>(_gameLogic);
 			MainInstaller.Bind<IGameServices>(_gameServices);
@@ -50,33 +51,34 @@ namespace Main
 
 			if (pauseStatus)
 			{
-				_gameLogic.DataProviderLogic.FlushData();
+				_gameServices.DataSaverService.SaveAllData();
 			}
 		}
 
 		private void OnApplicationQuit()
 		{
-			_gameLogic.DataProviderLogic.FlushData();
+			_gameServices.DataSaverService.SaveAllData();
 		}
 
-		private void LoadData(IDataProviderInternalLogic dataProviderLogic, ITimeService timeService)
+		private void LoadGameData(ITimeService timeService, IDataService dataService)
 		{
 			var time = timeService.DateTimeUtcNow;
 			var appDataJson = PlayerPrefs.GetString(nameof(AppData), "");
 			var playerDataJson = PlayerPrefs.GetString(nameof(PlayerData), "");
+			var appData = string.IsNullOrEmpty(appDataJson) ? new AppData() : JsonConvert.DeserializeObject<AppData>(appDataJson);
 			
-			dataProviderLogic.AddData(string.IsNullOrEmpty(appDataJson) ? new AppData() : JsonConvert.DeserializeObject<AppData>(appDataJson));
-			dataProviderLogic.AddData(string.IsNullOrEmpty(playerDataJson) ? new PlayerData() : JsonConvert.DeserializeObject<PlayerData>(playerDataJson));
+			dataService.AddData(appData);
+			dataService.AddData(string.IsNullOrEmpty(playerDataJson) ? new PlayerData() : JsonConvert.DeserializeObject<PlayerData>(playerDataJson));
 
 			if (string.IsNullOrEmpty(appDataJson))
 			{
-				dataProviderLogic.AppData.FirstLoginTime = time;
-				dataProviderLogic.AppData.LoginTime = time;
+				appData.FirstLoginTime = time;
+				appData.LoginTime = time;
 			}
 			
-			dataProviderLogic.AppData.LastLoginTime = dataProviderLogic.AppData.LoginTime;
-			dataProviderLogic.AppData.LoginTime = time;
-			dataProviderLogic.AppData.LoginCount++;
+			appData.LastLoginTime = appData.LoginTime;
+			appData.LoginTime = time;
+			appData.LoginCount++;
 		}
 	}
 }

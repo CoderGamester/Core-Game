@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GameLovers;
-using GameLovers.ConfigsContainer;
+using GameLovers.GoogleSheetImporter;
 using Ids;
 using UnityEngine;
 

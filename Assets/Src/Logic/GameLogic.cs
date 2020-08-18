@@ -1,6 +1,6 @@
 using Data;
 using GameLovers;
-using GameLovers.ConfigsContainer;
+using GameLovers.GoogleSheetImporter;
 using GameLovers.Services;
 using Ids;
 using Services;
@@ -24,16 +24,11 @@ namespace Logic
 	/// </summary>
 	public interface IGameDataProvider
 	{
-		/// <summary>
-		/// Requests the information if the current game session is the first time the player is playing the game or not
-		/// </summary>
-		bool IsFirstSession { get; }
-		
 		/// <inheritdoc cref="IConfigsProvider"/>
 		IConfigsProvider ConfigsProvider { get; }
 		
-		/// <inheritdoc cref="IEntityDataProvider"/>
-		IEntityDataProvider EntityDataProvider { get; }
+		/// <inheritdoc cref="IAppDataProvider"/>
+		IAppDataProvider AppDataProvider { get; }
 		/// <inheritdoc cref="IGameIdDataProvider"/>
 		IGameIdDataProvider GameIdDataProvider { get; }
 		/// <inheritdoc cref="ICurrencyDataProvider"/>
@@ -52,32 +47,22 @@ namespace Logic
 		/// <inheritdoc cref="ITimeService"/>
 		ITimeService TimeService { get; }
 		
-		/// <inheritdoc cref="IDataProviderLogic"/>
-		IDataProviderLogic DataProviderLogic { get; }
-		/// <inheritdoc cref="IEntityLogic"/>
-		IEntityLogic EntityLogic { get; }
+		/// <inheritdoc cref="IAppLogic"/>
+		IAppLogic AppLogic { get; }
 		/// <inheritdoc cref="IGameIdLogic"/>
 		IGameIdLogic GameIdLogic { get; }
 		/// <inheritdoc cref="ICurrencyLogic"/>
 		ICurrencyLogic CurrencyLogic { get; }
 	}
 
-	/// <inheritdoc cref="IGameLogic" />
-	/// <remarks>
-	/// This interface is only available internally to other logics
-	/// </remarks>
-	public interface IGameInternalLogic : IGameLogic, IGameLogicInitializer
+	/// <inheritdoc cref="IGameLogic"/>
+	public interface IGameLogicInit : IGameLogic, IGameLogicInitializer
 	{
-		/// <inheritdoc cref="IDataProviderLogic"/>
-		IDataProviderInternalLogic DataProviderInternalLogic { get; }
 	}
 
-	/// <inheritdoc />
-	public class GameLogic : IGameInternalLogic
+	/// <inheritdoc cref="IGameLogic"/>
+	public class GameLogic : IGameLogicInit
 	{
-		/// <inheritdoc />
-		public bool IsFirstSession => DataProviderInternalLogic.AppData.LoginCount == 1;
-
 		/// <inheritdoc />
 		public IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc />
@@ -87,35 +72,31 @@ namespace Logic
 		public IConfigsProvider ConfigsProvider { get; }
 
 		/// <inheritdoc />
-		public IEntityDataProvider EntityDataProvider => EntityLogic;
+		public IAppDataProvider AppDataProvider => AppLogic;
 		/// <inheritdoc />
 		public IGameIdDataProvider GameIdDataProvider => GameIdLogic;
 		/// <inheritdoc />
 		public ICurrencyDataProvider CurrencyDataProvider => CurrencyLogic;
-
+		
 		/// <inheritdoc />
-		public IDataProviderLogic DataProviderLogic => DataProviderInternalLogic;
-		/// <inheritdoc />
-		public IEntityLogic EntityLogic { get; }
+		public IAppLogic AppLogic { get; }
 		/// <inheritdoc />
 		public IGameIdLogic GameIdLogic { get; }
 		/// <inheritdoc />
 		public ICurrencyLogic CurrencyLogic { get; }
 
-		/// <inheritdoc />
-		public IDataProviderInternalLogic DataProviderInternalLogic { get; }
-
-		public GameLogic(IMessageBrokerService messageBroker, IDataProviderInternalLogic dataProviderInternalLogic,
-			ITimeService timeService)
+		public GameLogic(IMessageBrokerService messageBroker, ITimeService timeService, IDataProvider dataProvider)
 		{
+			var appData = dataProvider.GetData<AppData>();
+			var playerData = dataProvider.GetData<PlayerData>();
+			
 			MessageBrokerService = messageBroker;
 			TimeService = timeService;
-			DataProviderInternalLogic = dataProviderInternalLogic;
 			
 			ConfigsProvider = new ConfigsProvider();
-			EntityLogic = new EntityLogic(this, DataProviderInternalLogic);
-			CurrencyLogic = new CurrencyLogic(this, new ObservableDictionary<GameId, int>(DataProviderInternalLogic.PlayerData.Currencies));
-			GameIdLogic = new GameIdLogic(this, new ObservableDictionary<UniqueId, GameId>(DataProviderInternalLogic.PlayerData.GameIds));
+			AppLogic = new AppLogic(this, appData);
+			CurrencyLogic = new CurrencyLogic(this, playerData);
+			GameIdLogic = new GameIdLogic(this, playerData);
 		}
 
 		/// <inheritdoc />
