@@ -1,20 +1,20 @@
 {
   "dependencies": {
-    "com.gamelovers.assetloader": {
-      "version": "https://github.com/CoderGamester/com.gamelovers.assetloader.git",
+    "com.gamelovers.addressablesextensions": {
+      "version": "https://github.com/CoderGamester/com.gamelovers.addressablesextensions.git",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.addressables": "1.8.4"
+        "com.unity.addressables": "1.15.1"
       },
-      "hash": "85d704a16bd595dc412e8527b17e5dbe2e92b320"
+      "hash": "cae3e87ecc3052021df5f24491405b126bd2735d"
     },
-    "com.gamelovers.configscontainer": {
-      "version": "https://github.com/CoderGamester/com.gamelovers.configscontainer.git",
+    "com.gamelovers.dataextensions": {
+      "version": "https://github.com/CoderGamester/com.gamelovers.dataextensions.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "547ea2bf13d0f0c4ea67cfac3d7eba31f037b581"
+      "hash": "129fad543e02b0451497981924c667e71b4a1cad"
     },
     "com.gamelovers.googlesheetimporter": {
       "version": "https://github.com/CoderGamester/com.gamelovers.googlesheetimporter.git",
@@ -84,11 +84,11 @@
       "dependencies": {}
     },
     "com.unity.addressables": {
-      "version": "1.13.1",
-      "depth": 0,
+      "version": "1.15.1",
+      "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.scriptablebuildpipeline": "1.10.0",
+        "com.unity.scriptablebuildpipeline": "1.11.2",
         "com.unity.modules.assetbundle": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.unitywebrequestassetbundle": "1.0.0"
@@ -147,8 +147,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.10.0",
-      "depth": 1,
+      "version": "1.11.2",
+      "depth": 2,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

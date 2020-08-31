@@ -1,6 +1,5 @@
 ﻿using Data;
 using Events;
-using GameLovers.AssetLoader;
 using GameLovers.Services;
 using Logic;
 using Newtonsoft.Json;

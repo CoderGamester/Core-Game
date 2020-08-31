@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.gamelovers.assetloader": "https://github.com/CoderGamester/com.gamelovers.assetloader.git",
-    "com.gamelovers.configscontainer": "https://github.com/CoderGamester/com.gamelovers.configscontainer.git",
+    "com.gamelovers.addressablesextensions": "https://github.com/CoderGamester/com.gamelovers.addressablesextensions.git",
+    "com.gamelovers.dataextensions": "https://github.com/CoderGamester/com.gamelovers.dataextensions.git",
     "com.gamelovers.googlesheetimporter": "https://github.com/CoderGamester/com.gamelovers.googlesheetimporter.git",
     "com.gamelovers.nativeui": "https://github.com/CoderGamester/com.gamelovers.nativeui.git",
     "com.gamelovers.notificationservice": "https://github.com/CoderGamester/com.gamelovers.notificationservice.git",

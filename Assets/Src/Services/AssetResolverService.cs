@@ -1,5 +1,5 @@
-using GameLovers.AssetLoader;
-using GameLovers.UiService;
+using GameLovers.AddressablesExtensions;
+
 
 namespace Services
 {

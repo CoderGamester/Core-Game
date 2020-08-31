@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GameLovers.AssetLoader;
+using GameLovers.AddressablesExtensions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once CheckNamespace
