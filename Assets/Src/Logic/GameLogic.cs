@@ -85,18 +85,16 @@ namespace Logic
 		/// <inheritdoc />
 		public ICurrencyLogic CurrencyLogic { get; }
 
-		public GameLogic(IMessageBrokerService messageBroker, ITimeService timeService, IDataProvider dataProvider)
+		public GameLogic(IMessageBrokerService messageBroker, ITimeService timeService, IDataProvider dataProvider,
+		                 IConfigsProvider configsProvider)
 		{
-			var appData = dataProvider.GetData<AppData>();
-			var playerData = dataProvider.GetData<PlayerData>();
-			
 			MessageBrokerService = messageBroker;
 			TimeService = timeService;
+			ConfigsProvider = configsProvider;
 			
-			ConfigsProvider = new ConfigsProvider();
-			AppLogic = new AppLogic(this, appData);
-			CurrencyLogic = new CurrencyLogic(this, playerData);
-			GameIdLogic = new GameIdLogic(this, playerData);
+			AppLogic = new AppLogic(this, dataProvider);
+			CurrencyLogic = new CurrencyLogic(this, dataProvider);
+			GameIdLogic = new GameIdLogic(this, dataProvider);
 		}
 
 		/// <inheritdoc />

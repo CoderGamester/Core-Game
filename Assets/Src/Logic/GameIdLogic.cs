@@ -1,6 +1,7 @@
 using System;
 using Data;
 using GameLovers;
+using GameLovers.Services;
 using Ids;
 using TMPro;
 
@@ -14,7 +15,7 @@ namespace Logic
 		/// <summary>
 		/// Requests the <see cref="IObservableDictionary{TKey,TValue}"/> representation in readonly form of the <see cref="GameId"/> data
 		/// </summary>
-		IObservableDictionaryReader<UniqueId, GameId> Data { get; }
+		IObservableDictionaryReader<UniqueId, GameId> Ids { get; }
 
 		/// <summary>
 		/// Requests the <see cref="UniqueId"/> for the first element found with the given <paramref name="gameId"/>
@@ -37,26 +38,20 @@ namespace Logic
 		/// <summary>
 		/// Requests the <see cref="IObservableDictionary{TKey,TValue}"/> representation of the <see cref="GameId"/> data
 		/// </summary>
-		new IObservableDictionary<UniqueId, GameId> Data { get; }
+		new IObservableDictionary<UniqueId, GameId> Ids { get; }
 	}
 	
-	/// <inheritdoc />
-	public class GameIdLogic : IGameIdLogic
+	/// <inheritdoc cref="IGameIdLogic" />
+	public class GameIdLogic : AbstractBaseLogic<PlayerData>, IGameIdLogic
 	{
-		private readonly IGameLogic _gameLogic;
-		
 		/// <inheritdoc />
-		IObservableDictionaryReader<UniqueId, GameId> IGameIdDataProvider.Data => Data;
+		IObservableDictionaryReader<UniqueId, GameId> IGameIdDataProvider.Ids => Ids;
 		/// <inheritdoc />
-		public IObservableDictionary<UniqueId, GameId> Data { get; }
+		public IObservableDictionary<UniqueId, GameId> Ids { get; }
 
-		private GameIdLogic() {}
-
-		public GameIdLogic(IGameLogic gameLogic, PlayerData playerData)
+		public GameIdLogic(IGameLogic gameLogic, IDataProvider dataProvider) : base(gameLogic, dataProvider)
 		{
-			_gameLogic = gameLogic;
-			
-			Data = new ObservableDictionary<UniqueId, GameId>(playerData.GameIds);
+			Ids = new ObservableDictionary<UniqueId, GameId>(Data.GameIds);
 		}
 
 		/// <inheritdoc />
@@ -73,7 +68,7 @@ namespace Logic
 		/// <inheritdoc />
 		public bool TryGetUniqueId(GameId gameId, out UniqueId data)
 		{
-			foreach (var pair in Data)
+			foreach (var pair in Ids)
 			{
 				if (pair.Value == gameId)
 				{

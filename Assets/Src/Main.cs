@@ -1,13 +1,19 @@
 ﻿using Data;
+using EventHandlers;
 using Events;
+using GameLovers.GoogleSheetImporter;
 using GameLovers.Services;
+using GameLovers.UiService;
 using Logic;
 using Newtonsoft.Json;
 using Services;
+using StateMachines;
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 
-namespace Main
+// ReSharper disable once CheckNamespace
+
+namespace Game
 {
 	/// <summary>
 	/// The Main entry point of the game
@@ -26,37 +32,29 @@ namespace Main
 			var messageBroker = new MessageBrokerService();
 			var timeService = new TimeService();
 			var dataService = new DataService();
+			var configsProvider = new ConfigsProvider();
+			var uiService = new UiService(new UiAssetLoader());
 			var worldObjectReference = new WorldObjectReferenceService(_inputSystem, _mainCamera);
 
 			LoadGameData(timeService, dataService);
 			
-			_gameLogic = new GameLogic(messageBroker, timeService, dataService);
+			_gameLogic = new GameLogic(messageBroker, timeService, dataService, configsProvider);
 			_gameServices = new GameServices(messageBroker, timeService, dataService, _gameLogic, worldObjectReference);
 			
 			MainInstaller.Bind<IGameDataProvider>(_gameLogic);
 			MainInstaller.Bind<IGameServices>(_gameServices);
 			
-			_stateMachine = new GameStateMachine(_gameLogic, _gameServices);
+			_stateMachine = new GameStateMachine(_gameLogic, _gameServices, uiService, configsProvider);
 		}
 
 		private void Start()
 		{
+			var handlerHost = new GameObject("EventHandlers");
+			
+			handlerHost.AddComponent<PauseAppEventHandler>();
+			handlerHost.AddComponent<QuitAppEventHandler>();
+			DontDestroyOnLoad(handlerHost);
 			_stateMachine.Run();
-		}
-
-		private void OnApplicationPause(bool pauseStatus)
-		{
-			_gameServices.MessageBrokerService.Publish(new ApplicationPausedEvent { IsPaused = pauseStatus });
-
-			if (pauseStatus)
-			{
-				_gameServices.DataSaverService.SaveAllData();
-			}
-		}
-
-		private void OnApplicationQuit()
-		{
-			_gameServices.DataSaverService.SaveAllData();
 		}
 
 		private void LoadGameData(ITimeService timeService, IDataService dataService)

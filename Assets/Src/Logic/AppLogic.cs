@@ -1,5 +1,6 @@
 using System;
 using Data;
+using GameLovers.Services;
 
 namespace Logic
 {
@@ -17,35 +18,33 @@ namespace Logic
 		/// Requests the information if the game was or not yet reviewed
 		/// </summary>
 		bool IsGameReviewed { get; }
-	}
-	
-	/// <inheritdoc />
-	public interface IAppLogic : IAppDataProvider
-	{
+		
 		/// <summary>
-		/// Marks the game as already reviewed
+		/// Marks the date when the game was last time reviewed
 		/// </summary>
 		void MarkGameAsReviewed();
 	}
 	
 	/// <inheritdoc />
-	public class AppLogic : IAppLogic
+	public interface IAppLogic : IAppDataProvider
 	{
-		private readonly IGameLogic _gameLogic;
-		private readonly AppData _data;
+	}
+	
+	/// <inheritdoc cref="IAppLogic"/>
+	public class AppLogic : AbstractBaseLogic<AppData>, IAppLogic
+	{
+		private readonly DateTime _defaultZeroTime = new DateTime(2020, 1, 1);
 
 		/// <inheritdoc />
-		public bool IsFirstSession => _data.IsFirstSession;
+		public bool IsFirstSession => Data.IsFirstSession;
 
 		/// <inheritdoc />
-		public bool IsGameReviewed => _data.GameReviewDate > new DateTime(2020, 1, 1);
+		public bool IsGameReviewed => LocalData.GameReviewDate > _defaultZeroTime;
 
-		private AppLogic() {}
+		private LocalData LocalData => DataProvider.GetData<LocalData>();
 
-		public AppLogic(IGameLogic gameLogic, AppData appData)
+		public AppLogic(IGameLogic gameLogic, IDataProvider dataProvider) : base(gameLogic, dataProvider)
 		{
-			_gameLogic = gameLogic;
-			_data = appData;
 		}
 		
 		/// <inheritdoc />
@@ -56,7 +55,7 @@ namespace Logic
 				throw new LogicException("The game was already reviewed and cannot be reviewed again");
 			}
 			
-			_data.GameReviewDate = _gameLogic.TimeService.DateTimeUtcNow;
+			LocalData.GameReviewDate = GameLogic.TimeService.DateTimeUtcNow;
 		}
 	}
 }

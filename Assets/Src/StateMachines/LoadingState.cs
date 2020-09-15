@@ -8,20 +8,22 @@ using Presenters;
 using Services;
 using UnityEngine;
 
-namespace Main
+namespace StateMachines
 {
 	/// <summary>
 	/// This class represents the Loading state in the <seealso cref="GameStateMachine"/>
 	/// </summary>
 	internal class LoadingState
 	{
-		private readonly IConfigsProvider _configsProvider;
+		private readonly IConfigsAdder _configsAdder;
 		private readonly IGameServices _services;
+		private readonly IUiService _uiService;
 		
-		public LoadingState(IConfigsProvider configsProvider, IGameServices services)
+		public LoadingState(IConfigsAdder configsAdder, IGameServices services, IUiService uiService)
 		{
-			_configsProvider = configsProvider;
+			_configsAdder = configsAdder;
 			_services = services;
+			_uiService = uiService;
 		}
 
 		/// <summary>
@@ -46,6 +48,7 @@ namespace Main
 		/// </summary>
 		public async void FinalLoading(IWaitActivity activity)
 		{
+			await LoadMaiUi(0.8f);
 			await LoadGameWorld(1f);
 
 			Resources.UnloadUnusedAssets();
@@ -53,14 +56,14 @@ namespace Main
 			// Small delay to give the loading complete feedback
 			await Task.Delay(500);
 
-			_services.UiService.CloseUi<LoadingScreenPresenter>();
+			_uiService.CloseUi<LoadingScreenPresenter>();
 			activity.Complete();
 		}
 
 		private async Task LoadUiConfigsConfigs()
 		{
 			var configs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Configs_UiConfigs.GetConfig().Address);
-			var uiService = (UiService) _services.UiService; // Ugly conversion but only necessary this one time for this purpose
+			var uiService = (UiService) _uiService; // Ugly conversion but only necessary this one time for this purpose
 			
 			uiService.Init(configs);
 			
@@ -69,30 +72,52 @@ namespace Main
 
 		private async Task LoadOpenLoadingScreen()
 		{
-			await _services.UiService.LoadUiAsync<LoadingScreenPresenter>();
+			await _uiService.LoadUiAsync<LoadingScreenPresenter>();
 			
-			_services.UiService.OpenUi<LoadingScreenPresenter>().SetLoadingPercentage(0);
+			_uiService.OpenUi<LoadingScreenPresenter>().SetLoadingPercentage(0);
 		}
 
 		private async Task LoadConfigs(float loadingCap)
 		{
-			var configsProvider = (ConfigsProvider) _configsProvider; // Ugly conversion but only necessary this one time for this purpose
 			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Configs_GameConfigs.GetConfig().Address);
 			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Configs_DataConfigs.GetConfig().Address);
 			
-			configsProvider.AddSingletonConfig(gameConfigs.Config);
-			configsProvider.AddConfigs(data => (int) data.Id, dataConfigs.Configs);
+			_configsAdder.AddSingletonConfig(gameConfigs.Config);
+			_configsAdder.AddConfigs(data => (int) data.Id, dataConfigs.Configs);
 			
 			_services.AssetResolverService.UnloadAsset(gameConfigs);
 			_services.AssetResolverService.UnloadAsset(dataConfigs);
 			
-			_services.UiService.GetUi<LoadingScreenPresenter>().SetLoadingPercentage(loadingCap);
+			_uiService.GetUi<LoadingScreenPresenter>().SetLoadingPercentage(loadingCap);
 		}
 
 		private async Task LoadInitialUis(float loadingCap)
 		{
-			var loadingScreen = _services.UiService.GetUi<LoadingScreenPresenter>();
-			var tasks = _services.UiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi);
+			var loadingScreen = _uiService.GetUi<LoadingScreenPresenter>();
+			var tasks = _uiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi);
+			var initialLoadingPercentage = loadingScreen.LoadingPercentage;
+			var loadingBuffer = tasks.Length / loadingCap - initialLoadingPercentage;
+			var loadedUiCount = 0f;
+
+			// Load all initial uis
+			foreach (var taskTemplate in tasks)
+			{
+				var task = await taskTemplate;
+				var ui = await task;
+
+				loadedUiCount++;
+
+				loadingScreen.SetLoadingPercentage(initialLoadingPercentage + loadedUiCount / loadingBuffer);
+				ui.gameObject.SetActive(false);
+			}
+
+			loadingScreen.SetLoadingPercentage(loadingCap);
+		}
+
+		private async Task LoadMaiUi(float loadingCap)
+		{
+			var loadingScreen = _uiService.GetUi<LoadingScreenPresenter>();
+			var tasks = _uiService.LoadUiSetAsync((int) UiSetId.MainUi);
 			var initialLoadingPercentage = loadingScreen.LoadingPercentage;
 			var loadingBuffer = tasks.Length / loadingCap - initialLoadingPercentage;
 			var loadedUiCount = 0f;
@@ -114,7 +139,7 @@ namespace Main
 
 		private async Task LoadGameWorld(float loadingCap)
 		{
-			var loadingScreen = _services.UiService.GetUi<LoadingScreenPresenter>();
+			var loadingScreen = _uiService.GetUi<LoadingScreenPresenter>();
 
 			// Load the Game World -> await AssetLoaderService.LoadSceneAsync(AddressableId.GameWorld.GetConfig().Address, LoadSceneMode.Additive);
 			

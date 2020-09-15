@@ -14,7 +14,6 @@ namespace Data
 		public DateTime LoginTime;
 		public ulong LoginCount;
 		public UniqueId UniqueIdCounter = UniqueId.Invalid;
-		public DateTime GameReviewDate;
 		
 		/// <summary>
 		/// Requests the info if this is the first time the player open the game in it's lifetime

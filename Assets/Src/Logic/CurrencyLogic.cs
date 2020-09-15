@@ -1,7 +1,6 @@
-using System;
 using Data;
-using Events;
 using GameLovers;
+using GameLovers.Services;
 using Ids;
 
 namespace Logic
@@ -11,14 +10,6 @@ namespace Logic
 	/// </summary>
 	public interface ICurrencyDataProvider
 	{
-		/// <summary>
-		/// Requests the player's current <seealso cref="GameId.SoftCurrency"/> amount
-		/// </summary>
-		int SoftCurrencyAmount { get; }
-		/// <summary>
-		/// Requests the player's current <seealso cref="GameId.HardCurrency"/> amount
-		/// </summary>
-		int HardCurrencyAmount { get; }
 		/// <summary>
 		/// Requests the player's <seealso cref="GameIdGroup.Currency"/> <see cref="IObservableDictionary{TKey,TValue}"/>
 		/// </summary>
@@ -46,25 +37,17 @@ namespace Logic
 		void DeductCurrency(GameId currency, int amount);
 	}
 	
-	/// <inheritdoc />
-	public class CurrencyLogic : ICurrencyLogic
+	/// <inheritdoc cref="ICurrencyLogic"/>
+	public class CurrencyLogic : AbstractBaseLogic<PlayerData>, ICurrencyLogic
 	{
-		private readonly IGameLogic _gameLogic;
 		private readonly IObservableDictionary<GameId, int> _currencies;
 
 		/// <inheritdoc />
-		public int SoftCurrencyAmount => _currencies[GameId.SoftCurrency];
-		/// <inheritdoc />
-		public int HardCurrencyAmount => _currencies[GameId.HardCurrency];
-		/// <inheritdoc />
 		public IObservableDictionaryReader<GameId, int> Currencies => _currencies;
 
-		private CurrencyLogic() {}
-
-		public CurrencyLogic(IGameLogic gameLogic, PlayerData playerData)
+		public CurrencyLogic(IGameLogic gameLogic, IDataProvider dataProvider) : base(gameLogic, dataProvider)
 		{
-			_gameLogic = gameLogic;
-			_currencies = new ObservableDictionary<GameId, int>(playerData.Currencies);
+			_currencies = new ObservableDictionary<GameId, int>(Data.Currencies);
 		}
 
 		/// <inheritdoc />
@@ -79,8 +62,6 @@ namespace Logic
 			var newAmount = oldAmount + amount;
 			
 			_currencies[currency] = newAmount;
-
-			PublishCurrencyEvent(currency, oldAmount, newAmount);
 		}
 
 		/// <inheritdoc />
@@ -101,18 +82,6 @@ namespace Logic
 			}
 			
 			_currencies[currency] = newAmount;
-
-			PublishCurrencyEvent(currency, oldAmount, newAmount);
-		}
-
-		private void PublishCurrencyEvent(GameId currency, int oldAmount, int newAmount)
-		{
-			_gameLogic.MessageBrokerService.Publish(new CurrencyValueChangedEvent
-			{
-				Currency = currency,
-				OldValue = oldAmount,
-				NewValue = newAmount
-			});
 		}
 	}
 }

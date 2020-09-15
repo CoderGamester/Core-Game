@@ -14,22 +14,23 @@ namespace Services
 	/// </remarks>
 	public interface IGameServices
 	{
+		/// <inheritdoc cref="IDataSaver"/>
+		IDataSaver DataSaver { get; }
+		
 		/// <inheritdoc cref="IMessageBrokerService"/>
 		IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc cref="ICommandService{T}"/>
 		ICommandService<IGameLogic> CommandService { get; }
 		/// <inheritdoc cref="IPoolService"/>
 		IPoolService PoolService { get; }
-		/// <inheritdoc cref="IUiService"/>
-		IUiService UiService { get; }
 		/// <inheritdoc cref="ITickService"/>
 		ITickService TickService { get; }
 		/// <inheritdoc cref="ITimeService"/>
 		ITimeService TimeService { get; }
 		/// <inheritdoc cref="ICoroutineService"/>
 		ICoroutineService CoroutineService { get; }
-		/// <inheritdoc cref="IDataSaver"/>
-		IDataSaver DataSaverService { get; }
+		/// <inheritdoc cref="INetworkService"/>
+		INetworkService NetworkService { get; }
 		/// <inheritdoc cref="IAssetResolverService"/>
 		IAssetResolverService AssetResolverService { get; }
 		/// <inheritdoc cref="IWorldObjectReferenceService"/>
@@ -40,13 +41,14 @@ namespace Services
 	public class GameServices : IGameServices
 	{
 		/// <inheritdoc />
+		public IDataSaver DataSaver { get; }
+
+		/// <inheritdoc />
 		public IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc />
 		public ICommandService<IGameLogic> CommandService { get; }
 		/// <inheritdoc />
 		public IPoolService PoolService { get; }
-		/// <inheritdoc />
-		public IUiService UiService { get; }
 		/// <inheritdoc />
 		public ITickService TickService { get; }
 		/// <inheritdoc />
@@ -54,7 +56,7 @@ namespace Services
 		/// <inheritdoc />
 		public ICoroutineService CoroutineService { get; }
 		/// <inheritdoc />
-		public IDataSaver DataSaverService { get; }
+		public INetworkService NetworkService { get; }
 		/// <inheritdoc />
 		public IAssetResolverService AssetResolverService { get; }
 
@@ -64,15 +66,17 @@ namespace Services
 		public GameServices(IMessageBrokerService messageBrokerService, ITimeService timeService, IDataSaver dataSaver,
 		                    IGameLogic gameLogic, IWorldObjectReferenceService worldObjectReference)
 		{
+			var networkService = new GameNetworkService();
+
+			NetworkService = networkService;
 			MessageBrokerService = messageBrokerService;
 			TimeService = timeService;
 			WorldObjectReferenceService = worldObjectReference;
-			DataSaverService = dataSaver;
+			DataSaver = dataSaver;
 			
-			CommandService = new CommandService<IGameLogic>(gameLogic);
+			CommandService = new CommandService<IGameLogic>(gameLogic, networkService);
 			PoolService = new PoolService();
 			AssetResolverService = new AssetResolverService();
-			UiService = new UiService(new UiAssetLoader());
 			TickService =  new TickService();
 			CoroutineService = new CoroutineService();
 		}

@@ -1,9 +1,12 @@
+using GameLovers.GoogleSheetImporter;
 using GameLovers.Statechart;
+using GameLovers.UiService;
 using Ids;
 using Logic;
 using Services;
+using UnityEngine;
 
-namespace Main
+namespace StateMachines
 {
 	/// <summary>
 	/// The State Machine that controls the entire flow of the game
@@ -13,6 +16,7 @@ namespace Main
 		private readonly IStatechart _stateMachine;
 		private readonly IGameLogicInit _gameLogic;
 		private readonly IGameServices _services;
+		private readonly IUiService _uiService;
 		private readonly LoadingState _loadingState;
 
 		/// <inheritdoc />
@@ -22,11 +26,13 @@ namespace Main
 			set => _stateMachine.LogsEnabled = value;
 		}
 
-		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services)
+		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IUiService uiService, IConfigsAdder configsAdder)
 		{
 			_gameLogic = gameLogic;
 			_services = services;
-			_loadingState = new LoadingState(gameLogic.ConfigsProvider, _services);
+			_uiService = uiService;
+			
+			_loadingState = new LoadingState(configsAdder, _services, _uiService);
 			_stateMachine = new Statechart(Setup);
 		}
 
@@ -63,17 +69,26 @@ namespace Main
 			
 			initial.Transition().Target(initialLoading);
 			
+			initialLoading.OnEnter(InitPlugins);
 			initialLoading.WaitingFor(_loadingState.InitialLoading).Target(finalLoading);
 			
 			finalLoading.OnEnter(_gameLogic.Init);
 			finalLoading.WaitingFor(_loadingState.FinalLoading).Target(game);
 			
-			game.OnEnter(StartGame);
+			game.OnEnter(OpenGameUi);
 		}
 
-		private void StartGame()
+		private void InitPlugins()
 		{
-			_services.UiService.OpenUiSet((int) UiSetId.MainUi, false);
+			if (Debug.isDebugBuild)
+			{
+				//SRDebug.Init();
+			}
+		}
+
+		private void OpenGameUi()
+		{
+			_uiService.OpenUiSet((int) UiSetId.MainUi, false);
 		}
 	}
 }

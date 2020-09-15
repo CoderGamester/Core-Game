@@ -1,4 +1,6 @@
+using System;
 using Events;
+using GameLovers;
 using GameLovers.Services;
 using GameLovers.UiService;
 using Ids;
@@ -11,10 +13,10 @@ using Views;
 namespace Presenters
 {
 	/// <summary>
-	/// This Presenter handles the HUD UI by:
+	/// This Presenter handles the Main HUD UI by:
 	/// - Showing the HUD visual status
 	/// </summary>
-	public class HudPresenter : UiPresenter
+	public class MainHudPresenter : UiPresenter
 	{
 		[SerializeField] private TimerView _timer;
 		[SerializeField] private TextMeshProUGUI _softCurrencyText;
@@ -29,25 +31,22 @@ namespace Presenters
 			_services = MainInstaller.Resolve<IGameServices>();
 
 			_timer.Init(_services);
-			_services.MessageBrokerService.Subscribe<CurrencyValueChangedEvent>(OnCurrencyValueChanged);
 		}
 
 		protected override void OnOpened()
 		{
-			_softCurrencyText.text = $"SC: {_dataProvider.CurrencyDataProvider.SoftCurrencyAmount.ToString()}";
-			_hardCurrencyText.text = $"HC: {_dataProvider.CurrencyDataProvider.HardCurrencyAmount.ToString()}";
+			_dataProvider.CurrencyDataProvider.Currencies.InvokeObserve(GameId.SoftCurrency, ObservableUpdateType.Updated, OnSoftCurrencyUpdated);
+			_dataProvider.CurrencyDataProvider.Currencies.InvokeObserve(GameId.HardCurrency, ObservableUpdateType.Updated, OnHardCurrencyUpdated);
 		}
 
-		private void OnCurrencyValueChanged(CurrencyValueChangedEvent eventData)
+		private void OnSoftCurrencyUpdated(GameId currency, int amount)
 		{
-			if (eventData.Currency == GameId.HardCurrency)
-			{
-				_hardCurrencyText.text = $"HC: {eventData.NewValue.ToString()}";
-			}
-			else if (eventData.Currency == GameId.SoftCurrency)
-			{
-				_softCurrencyText.text = $"SC: {eventData.NewValue.ToString()}";
-			}
+			_softCurrencyText.text = $"SC: {amount.ToString()}";
+		}
+
+		private void OnHardCurrencyUpdated(GameId currency, int amount)
+		{
+			_hardCurrencyText.text = $"HC: {amount.ToString()}";
 		}
 	}
 }
