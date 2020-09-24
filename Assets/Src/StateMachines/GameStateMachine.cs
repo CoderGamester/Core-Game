@@ -1,7 +1,6 @@
 using GameLovers.GoogleSheetImporter;
+using GameLovers.Services;
 using GameLovers.Statechart;
-using GameLovers.UiService;
-using Ids;
 using Logic;
 using Services;
 using UnityEngine;
@@ -11,71 +10,70 @@ namespace StateMachines
 	/// <summary>
 	/// The State Machine that controls the entire flow of the game
 	/// </summary>
-	public class GameStateMachine : IStatechart
+	public class GameStateMachine
 	{
 		private readonly IStatechart _stateMachine;
 		private readonly IGameLogicInit _gameLogic;
 		private readonly IGameServices _services;
-		private readonly IUiService _uiService;
-		private readonly LoadingState _loadingState;
+		private readonly IGameUiServiceInit _uiService;
+		private readonly InitialLoadingState _initialLoadingState;
+		private readonly GameplayState _gameplayState;
 
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStatechart.LogsEnabled"/>
 		public bool LogsEnabled
 		{
 			get => _stateMachine.LogsEnabled;
 			set => _stateMachine.LogsEnabled = value;
 		}
 
-		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IUiService uiService, IConfigsAdder configsAdder)
+		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IGameUiServiceInit uiService, 
+		                        IConfigsAdder configsAdder, IDataService dataService)
 		{
 			_gameLogic = gameLogic;
 			_services = services;
 			_uiService = uiService;
 			
-			_loadingState = new LoadingState(configsAdder, _services, _uiService);
+			_initialLoadingState = new InitialLoadingState(_gameLogic, _services, _uiService, configsAdder, dataService);
+			_gameplayState = new GameplayState(_services, _uiService, Trigger);
 			_stateMachine = new Statechart(Setup);
 		}
 
-		/// <inheritdoc />
-		public void Trigger(IStatechartEvent trigger)
-		{
-			_stateMachine.Trigger(trigger);
-		}
-
-		/// <inheritdoc />
+		/// <inheritdoc cref="IStatechart.LogsEnabled"/>
 		public void Run()
 		{
 			_stateMachine.Run();
 		}
 
-		/// <inheritdoc />
-		public void Pause()
+		private void Trigger(IStatechartEvent eventTrigger)
 		{
-			_stateMachine.Pause();
-		}
-
-		/// <inheritdoc />
-		public void Reset()
-		{
-			_stateMachine.Reset();
+			_stateMachine.Trigger(eventTrigger);
 		}
 
 		private void Setup(IStateFactory stateFactory)
 		{
 			var initial = stateFactory.Initial("Initial");
-			var initialLoading = stateFactory.Wait("Initial Loading");
-			var finalLoading = stateFactory.Wait("Final Loading");
-			var game = stateFactory.State("Game");
+			var final = stateFactory.Final("Final");
+			var initialLoading = stateFactory.Nest("Initial Loading");
+			var game = stateFactory.Nest("Game");
 			
 			initial.Transition().Target(initialLoading);
+			initial.OnExit(SubscribeEvents);
 			
-			initialLoading.OnEnter(InitPlugins);
-			initialLoading.WaitingFor(_loadingState.InitialLoading).Target(finalLoading);
+			initialLoading.Nest(_initialLoadingState.Setup).Target(game);
 			
-			finalLoading.OnEnter(_gameLogic.Init);
-			finalLoading.WaitingFor(_loadingState.FinalLoading).Target(game);
+			game.Nest(_gameplayState.Setup).Target(final);
 			
-			game.OnEnter(OpenGameUi);
+			final.OnEnter(UnsubscribeEvents);
+		}
+
+		private void UnsubscribeEvents()
+		{
+			_services.MessageBrokerService.UnsubscribeAll(this);
+		}
+
+		private void SubscribeEvents()
+		{
+			// Add any events to subscribe
 		}
 
 		private void InitPlugins()
@@ -84,11 +82,6 @@ namespace StateMachines
 			{
 				//SRDebug.Init();
 			}
-		}
-
-		private void OpenGameUi()
-		{
-			_uiService.OpenUiSet((int) UiSetId.MainUi, false);
 		}
 	}
 }

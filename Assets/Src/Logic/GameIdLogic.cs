@@ -1,9 +1,7 @@
-using System;
 using Data;
 using GameLovers;
 using GameLovers.Services;
 using Ids;
-using TMPro;
 
 namespace Logic
 {
@@ -42,14 +40,19 @@ namespace Logic
 	}
 	
 	/// <inheritdoc cref="IGameIdLogic" />
-	public class GameIdLogic : AbstractBaseLogic<PlayerData>, IGameIdLogic
+	public class GameIdLogic : AbstractBaseLogic<PlayerData>, IGameIdLogic, IGameLogicInitializer
 	{
 		/// <inheritdoc />
 		IObservableDictionaryReader<UniqueId, GameId> IGameIdDataProvider.Ids => Ids;
 		/// <inheritdoc />
-		public IObservableDictionary<UniqueId, GameId> Ids { get; }
+		public IObservableDictionary<UniqueId, GameId> Ids { get; private set; }
 
 		public GameIdLogic(IGameLogic gameLogic, IDataProvider dataProvider) : base(gameLogic, dataProvider)
+		{
+		}
+
+		/// <inheritdoc />
+		public void Init()
 		{
 			Ids = new ObservableDictionary<UniqueId, GameId>(Data.GameIds);
 		}

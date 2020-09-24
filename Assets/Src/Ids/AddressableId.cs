@@ -11,11 +11,11 @@ namespace Ids
 {
 	public enum AddressableId
 	{
+		Prefabs_Ui_Loading_Screen,
+		Prefabs_Ui_MainHud,
 		Configs_DataConfigs,
 		Configs_GameConfigs,
-		Configs_UiConfigs,
-		Prefabs_Ui_Hud,
-		Prefabs_Ui_Loading_Screen
+		Configs_UiConfigs
 	}
 
 	public enum AddressableLabel
@@ -24,8 +24,8 @@ namespace Ids
 
 	public static class AddressablePathLookup
 	{
-		public static readonly string Configs = "Configs";
 		public static readonly string PrefabsUi = "Prefabs/Ui";
+		public static readonly string Configs = "Configs";
 	}
 
 	public static class AddressableConfigLookup
@@ -58,11 +58,11 @@ namespace Ids
 
 		private static readonly IList<AddressableConfig> _addressableConfigs = new List<AddressableConfig>
 		{
-			new AddressableConfig(0, "Configs/DataConfigs.asset", "Assets/ScriptableObjects/Configs/DataConfigs.asset", typeof(Configs.DataConfigs), new [] {""}),
-			new AddressableConfig(1, "Configs/GameConfigs.asset", "Assets/ScriptableObjects/Configs/GameConfigs.asset", typeof(Configs.GameConfigs), new [] {""}),
-			new AddressableConfig(2, "Configs/UiConfigs.asset", "Assets/ScriptableObjects/Configs/UiConfigs.asset", typeof(GameLovers.UiService.UiConfigs), new [] {""}),
-			new AddressableConfig(3, "Prefabs/Ui/Hud.prefab", "Assets/Art/Prefabs/Ui/Hud.prefab", typeof(UnityEngine.GameObject), new [] {""}),
-			new AddressableConfig(4, "Prefabs/Ui/Loading Screen.prefab", "Assets/Art/Prefabs/Ui/Loading Screen.prefab", typeof(UnityEngine.GameObject), new [] {""})
+			new AddressableConfig(0, "Prefabs/Ui/Loading Screen.prefab", "Assets/Art/Prefabs/Ui/Loading Screen.prefab", typeof(UnityEngine.GameObject), new [] {""}),
+			new AddressableConfig(1, "Prefabs/Ui/MainHud.prefab", "Assets/Art/Prefabs/Ui/MainHud.prefab", typeof(UnityEngine.GameObject), new [] {""}),
+			new AddressableConfig(2, "Configs/DataConfigs.asset", "Assets/ScriptableObjects/Configs/DataConfigs.asset", typeof(Configs.DataConfigs), new [] {""}),
+			new AddressableConfig(3, "Configs/GameConfigs.asset", "Assets/ScriptableObjects/Configs/GameConfigs.asset", typeof(Configs.GameConfigs), new [] {""}),
+			new AddressableConfig(4, "Configs/UiConfigs.asset", "Assets/ScriptableObjects/Configs/UiConfigs.asset", typeof(GameLovers.UiService.UiConfigs), new [] {""})
 		}.AsReadOnly();
 	}
 }

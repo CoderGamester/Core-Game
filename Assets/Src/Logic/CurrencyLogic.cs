@@ -38,14 +38,19 @@ namespace Logic
 	}
 	
 	/// <inheritdoc cref="ICurrencyLogic"/>
-	public class CurrencyLogic : AbstractBaseLogic<PlayerData>, ICurrencyLogic
+	public class CurrencyLogic : AbstractBaseLogic<PlayerData>, ICurrencyLogic, IGameLogicInitializer
 	{
-		private readonly IObservableDictionary<GameId, int> _currencies;
+		private IObservableDictionary<GameId, int> _currencies;
 
 		/// <inheritdoc />
 		public IObservableDictionaryReader<GameId, int> Currencies => _currencies;
 
 		public CurrencyLogic(IGameLogic gameLogic, IDataProvider dataProvider) : base(gameLogic, dataProvider)
+		{
+		}
+
+		/// <inheritdoc />
+		public void Init()
 		{
 			_currencies = new ObservableDictionary<GameId, int>(Data.Currencies);
 		}

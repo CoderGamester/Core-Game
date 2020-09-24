@@ -1,9 +1,5 @@
-using Data;
-using GameLovers;
 using GameLovers.GoogleSheetImporter;
 using GameLovers.Services;
-using Ids;
-using Services;
 
 namespace Logic
 {
@@ -102,9 +98,8 @@ namespace Logic
 		{
 			// ReSharper disable PossibleNullReferenceException
 			
-			/* Logic initializer example
-			(AchievementLogic as IGameLogicInitializer).Init();
-			*/
+			(CurrencyLogic as IGameLogicInitializer).Init();
+			(GameIdLogic as IGameLogicInitializer).Init();
 		}
 	}
 }
