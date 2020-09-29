@@ -14,7 +14,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "129fad543e02b0451497981924c667e71b4a1cad"
+      "hash": "354c26ef7e4a2ca9c5bcfe2e6337210c82d37082"
     },
     "com.gamelovers.googlesheetimporter": {
       "version": "https://github.com/CoderGamester/com.gamelovers.googlesheetimporter.git",
@@ -60,7 +60,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7675691a3f13333e0dc286e866007d63db474345"
+      "hash": "943e631fb79ad8e2aa9abf594774fe6ced9467b6"
     },
     "com.gamelovers.uiservice": {
       "version": "https://github.com/CoderGamester/com.gamelovers.uiservice.git",
@@ -118,6 +118,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.ide.visualstudio": {
+      "version": "2.0.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.inputsystem": {
       "version": "1.0.0",
       "depth": 0,
@@ -154,7 +161,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.14",
+      "version": "1.1.16",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -165,7 +172,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.textmeshpro": {
-      "version": "2.1.1",
+      "version": "3.0.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -178,7 +185,8 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
-        "com.unity.modules.ui": "1.0.0"
+        "com.unity.modules.ui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0"
       }
     },
     "com.unity.modules.ai": {
@@ -314,6 +322,18 @@
       "depth": 0,
       "source": "builtin",
       "dependencies": {
+        "com.unity.modules.ui": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.uielementsnative": "1.0.0"
+      }
+    },
+    "com.unity.modules.uielementsnative": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "builtin",
+      "dependencies": {
+        "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       }

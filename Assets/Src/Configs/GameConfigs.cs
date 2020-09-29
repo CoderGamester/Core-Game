@@ -8,7 +8,7 @@ namespace Configs
 	[Serializable]
 	public struct GameConfig
 	{
-		public IntPairData Random;
+		public Pair<int, int> Random;
 		public string GameVersion;
 		public int MaxPlayers;
 	}

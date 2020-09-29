@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FirstLight.Game.Data;
+using Data;
 
 namespace Cheats
 {

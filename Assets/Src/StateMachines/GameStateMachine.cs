@@ -12,14 +12,13 @@ namespace StateMachines
 	/// </summary>
 	public class GameStateMachine
 	{
-		private readonly IStatechart _stateMachine;
-		private readonly IGameLogicInit _gameLogic;
+		private readonly IStateMachine _stateMachine;
 		private readonly IGameServices _services;
 		private readonly IGameUiServiceInit _uiService;
 		private readonly InitialLoadingState _initialLoadingState;
 		private readonly GameplayState _gameplayState;
 
-		/// <inheritdoc cref="IStatechart.LogsEnabled"/>
+		/// <inheritdoc cref="IStateMachine.LogsEnabled"/>
 		public bool LogsEnabled
 		{
 			get => _stateMachine.LogsEnabled;
@@ -29,13 +28,12 @@ namespace StateMachines
 		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IGameUiServiceInit uiService, 
 		                        IConfigsAdder configsAdder, IDataService dataService)
 		{
-			_gameLogic = gameLogic;
 			_services = services;
 			_uiService = uiService;
 			
-			_initialLoadingState = new InitialLoadingState(_gameLogic, _services, _uiService, configsAdder, dataService);
+			_initialLoadingState = new InitialLoadingState(gameLogic, _services, _uiService, configsAdder, dataService);
 			_gameplayState = new GameplayState(_services, _uiService, Trigger);
-			_stateMachine = new Statechart(Setup);
+			_stateMachine = new StateMachine(Setup);
 		}
 
 		/// <inheritdoc cref="IStatechart.LogsEnabled"/>
@@ -74,14 +72,6 @@ namespace StateMachines
 		private void SubscribeEvents()
 		{
 			// Add any events to subscribe
-		}
-
-		private void InitPlugins()
-		{
-			if (Debug.isDebugBuild)
-			{
-				//SRDebug.Init();
-			}
 		}
 	}
 }

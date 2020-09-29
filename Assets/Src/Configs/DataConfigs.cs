@@ -15,10 +15,10 @@ namespace Configs
 		public string String;
 		public float Float;
 		public List<int> List;
-		public IntPairData IntPair;
-		public FloatPairData FloatPair;
-		public StringPairData StringPair;
-		public List<IntPairData> ListPair;
+		public Pair<int, int> IntPair;
+		public Pair<float, float> FloatPair;
+		public Pair<string, string> StringPair;
+		public List<Pair<int, int>> ListPair;
 	}
 	
 	/// <summary>

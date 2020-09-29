@@ -109,33 +109,4 @@ namespace Ids
 			return (int) obj.Id;
 		}
 	}
-
-	/// <inheritdoc />
-	/// <remarks>
-	/// Enhances the <see cref="IObservableIdList"/> with a defined <see cref="UniqueId"/> key type
-	/// </remarks>
-	public interface IUniqueIdList : IObservableIdList
-	{
-	}
-	
-	/// <inheritdoc cref="IObservableIdList" />
-	public interface IUniqueIdListReader<T> : IObservableIdListReader<UniqueId, T>, IUniqueIdList
-		where T : struct
-	{
-	}
-
-	/// <inheritdoc cref="IObservableIdList" />
-	public interface IUniqueIdList<T> : IObservableIdList<UniqueId, T>, IUniqueIdListReader<T>
-		where T : struct
-	{
-	}
-
-	/// <inheritdoc cref="IObservableIdList" />
-	public class UniqueIdList<T> : ObservableIdList<UniqueId, T>, IUniqueIdList<T> 
-		where T : struct
-	{
-		public UniqueIdList(Func<T, UniqueId> referenceIdResolver, IList<T> list) : base(referenceIdResolver, list)
-		{
-		}
-	}
 }
