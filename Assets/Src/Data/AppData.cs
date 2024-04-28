@@ -1,7 +1,6 @@
 using System;
-using Ids;
 
-namespace Data
+namespace Game.Data
 {
 	/// <summary>
 	/// Contains all the data in the scope of the Game's App
@@ -9,15 +8,40 @@ namespace Data
 	[Serializable]
 	public class AppData
 	{
+		public enum QualityLevel
+		{
+			High,
+			Medium,
+			Low
+		}
+
+		public string DisplayName;
+		public string PlayerId;
 		public DateTime FirstLoginTime;
 		public DateTime LastLoginTime;
 		public DateTime LoginTime;
-		public ulong LoginCount;
-		public UniqueId UniqueIdCounter = UniqueId.Invalid;
-		
+		public bool IsFirstSession;
+		public string Environment;
+		public string DeviceId;
+		public DateTime GameReviewDate;
+
+		public bool HapticEnabled = true;
+		public int FpsTarget = 30;
+		public QualityLevel GraphicQuality = QualityLevel.Medium;
+
 		/// <summary>
-		/// Requests the info if this is the first time the player open the game in it's lifetime
+		/// Copies base values for when user logs in to a new environment.
+		/// We want to maintain a few settings across environments, those settings
+		/// should be added to this copy method.
 		/// </summary>
-		public bool IsFirstSession => LoginCount <= 1;
+		public AppData CopyForNewEnvironment()
+		{
+			return new AppData
+			{
+				HapticEnabled = this.HapticEnabled,
+				FpsTarget = this.FpsTarget,
+				GraphicQuality = this.GraphicQuality,
+			};
+		}
 	}
 }

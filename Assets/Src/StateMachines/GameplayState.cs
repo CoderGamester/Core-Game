@@ -1,11 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using GameLovers.Statechart;
-using Ids;
-using Services;
+using GameLovers.Services;
+using GameLovers.StatechartMachine;
+using Game.Ids;
+using Game.Services;
 using UnityEngine;
 
-namespace StateMachines
+namespace Game.StateMachines
 {
 	/// <summary>
 	/// This object contains the behaviour logic for the Gameplay State in the <seealso cref="GameStateMachine"/>
@@ -16,10 +17,10 @@ namespace StateMachines
 		private readonly IGameServices _services;
 		private readonly Action<IStatechartEvent> _statechartTrigger;
 		
-		public GameplayState(IGameServices services, IGameUiService uiService, Action<IStatechartEvent> statechartTrigger)
+		public GameplayState(IGameServices services, IInstaller installer, Action<IStatechartEvent> statechartTrigger)
 		{
 			_services = services;
-			_uiService = uiService;
+			_uiService = installer.Resolve<IGameUiServiceInit>();
 			_statechartTrigger = statechartTrigger;
 		}
 

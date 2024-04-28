@@ -1,17 +1,17 @@
 using System.Threading.Tasks;
-using Configs;
-using Data;
-using GameLovers.GoogleSheetImporter;
+using Game.Configs;
+using Game.Data;
+using GameLovers.ConfigsProvider;
 using GameLovers.Services;
-using GameLovers.Statechart;
+using GameLovers.StatechartMachine;
 using GameLovers.UiService;
-using Ids;
-using Logic;
+using Game.Ids;
+using Game.Logic;
 using Newtonsoft.Json;
-using Services;
+using Game.Services;
 using UnityEngine;
 
-namespace StateMachines
+namespace Game.StateMachines
 {
 	/// <summary>
 	/// This class represents the Loading state in the <seealso cref="GameStateMachine"/>
@@ -24,14 +24,13 @@ namespace StateMachines
 		private readonly IConfigsAdder _configsAdder;
 		private readonly IDataService _dataService;
 		
-		public InitialLoadingState(IGameLogicInit gameLogic, IGameServices services, IGameUiServiceInit uiService, 
-		                           IConfigsAdder configsAdder, IDataService dataService)
+		public InitialLoadingState(IGameLogicInit gameLogic, IGameServices services, IInstaller installer)
 		{
 			_gameLogic = gameLogic;
 			_services = services;
-			_uiService = uiService;
-			_configsAdder = configsAdder;
-			_dataService = dataService;
+			_uiService = installer.Resolve<IGameUiServiceInit>();
+			_configsAdder = installer.Resolve<IConfigsAdder>();
+			_dataService = installer.Resolve<IDataService>();
 		}
 
 		/// <summary>
@@ -82,9 +81,9 @@ namespace StateMachines
 
 		private async Task LoadConfigs()
 		{
-			var uiConfigs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Configs_UiConfigs.GetConfig().Address);
-			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Configs_GameConfigs.GetConfig().Address);
-			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Configs_DataConfigs.GetConfig().Address);
+			var uiConfigs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Addressables_Configs_UiConfigs.GetConfig().Address);
+			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Addressables_Configs_GameConfigs.GetConfig().Address);
+			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Addressables_Configs_DataConfigs.GetConfig().Address);
 			
 			_uiService.Init(uiConfigs);
 			_configsAdder.AddSingletonConfig(gameConfigs.Config);
@@ -100,10 +99,8 @@ namespace StateMachines
 			var time = _services.TimeService.DateTimeUtcNow;
 			var appDataJson = PlayerPrefs.GetString(nameof(AppData), "");
 			var playerDataJson = PlayerPrefs.GetString(nameof(PlayerData), "");
-			var localDataJson = PlayerPrefs.GetString(nameof(LocalData), "");
 			var appData = string.IsNullOrEmpty(appDataJson) ? new AppData() : JsonConvert.DeserializeObject<AppData>(appDataJson);
 			var playerData = string.IsNullOrEmpty(playerDataJson) ? new PlayerData() : JsonConvert.DeserializeObject<PlayerData>(playerDataJson);
-			var localData = string.IsNullOrEmpty(localDataJson) ? new LocalData() : JsonConvert.DeserializeObject<LocalData>(localDataJson);
 
 			if (string.IsNullOrEmpty(appDataJson))
 			{
@@ -113,11 +110,9 @@ namespace StateMachines
 			
 			appData.LastLoginTime = appData.LoginTime;
 			appData.LoginTime = time;
-			appData.LoginCount++;
 			
 			_dataService.AddData(appData);
 			_dataService.AddData(playerData);
-			_dataService.AddData(localData);
 		}
 	}
 }

@@ -1,9 +1,9 @@
 using System;
 using GameLovers;
-using GameLovers.GoogleSheetImporter;
+using GameLovers.ConfigsProvider;
 using UnityEngine;
 
-namespace Configs
+namespace Game.Configs
 {
 	[Serializable]
 	public struct GameConfig

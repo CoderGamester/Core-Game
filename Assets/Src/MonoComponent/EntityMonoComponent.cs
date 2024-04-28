@@ -1,7 +1,7 @@
-using Ids;
+using Game.Ids;
 using UnityEngine;
 
-namespace MonoComponent
+namespace Game.MonoComponent
 {
 	/// <summary>
 	/// Simple Mono Component containing the object's <seealso cref="UniqueId"/>

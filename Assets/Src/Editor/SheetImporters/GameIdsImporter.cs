@@ -5,11 +5,11 @@ using GameLovers.GoogleSheetImporter;
 using GameLoversEditor.GoogleSheetImporter;
 using UnityEditor;
 
-namespace SheetImporters
+namespace Game.SheetImporters
 {
 	/// <inheritdoc />
 	[GoogleSheetImportOrder(0)]
-	public class GameIdsImporter : IGoogleSheetImporter
+	public class GameIdsImporter : IGoogleSheetConfigsImporter
 	{
 		private const string _NAME = "GameId";
 		private const string _NAME_GROUP = "GameIdGroup";
@@ -63,7 +63,7 @@ namespace SheetImporters
 			stringBuilder.AppendLine("using System.Collections.ObjectModel;");
 			stringBuilder.AppendLine("");
 			stringBuilder.AppendLine("/* AUTO GENERATED CODE */");
-			stringBuilder.AppendLine("namespace Ids");
+			stringBuilder.AppendLine("namespace Game.Ids");
 			stringBuilder.AppendLine("{");
 			
 			stringBuilder.AppendLine($"\tpublic enum {_NAME}");

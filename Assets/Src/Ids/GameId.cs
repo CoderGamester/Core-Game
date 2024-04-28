@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 /* AUTO GENERATED CODE */
-namespace Ids
+namespace Game.Ids
 {
 	public enum GameId
 	{

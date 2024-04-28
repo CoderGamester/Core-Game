@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Configs;
+using Game.Configs;
 using GameLovers.GoogleSheetImporter;
 using GameLoversEditor.GoogleSheetImporter;
 
-namespace SheetImporters
+namespace Game.SheetImporters
 {
 	/// <inheritdoc />
 	public class GameConfigsImporter : GoogleSheetSingleConfigImporter<GameConfig, GameConfigs>

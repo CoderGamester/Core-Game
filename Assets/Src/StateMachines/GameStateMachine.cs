@@ -1,18 +1,17 @@
-using GameLovers.GoogleSheetImporter;
 using GameLovers.Services;
-using GameLovers.Statechart;
-using Logic;
-using Services;
-using UnityEngine;
+using GameLovers.StatechartMachine;
+using Game.Logic;
+using Game.Services;
+using System;
 
-namespace StateMachines
+namespace Game.StateMachines
 {
 	/// <summary>
 	/// The State Machine that controls the entire flow of the game
 	/// </summary>
-	public class GameStateMachine
+	public class GameStateMachine : IDisposable
 	{
-		private readonly IStateMachine _stateMachine;
+		private readonly IStatechart _stateMachine;
 		private readonly IGameServices _services;
 		private readonly IGameUiServiceInit _uiService;
 		private readonly InitialLoadingState _initialLoadingState;
@@ -25,21 +24,25 @@ namespace StateMachines
 			set => _stateMachine.LogsEnabled = value;
 		}
 
-		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IGameUiServiceInit uiService, 
-		                        IConfigsAdder configsAdder, IDataService dataService)
+		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IInstaller installer)
 		{
 			_services = services;
-			_uiService = uiService;
+			_uiService = installer.Resolve<IGameUiServiceInit>();
 			
-			_initialLoadingState = new InitialLoadingState(gameLogic, _services, _uiService, configsAdder, dataService);
-			_gameplayState = new GameplayState(_services, _uiService, Trigger);
-			_stateMachine = new StateMachine(Setup);
+			_initialLoadingState = new InitialLoadingState(gameLogic, _services, installer);
+			_gameplayState = new GameplayState(_services, installer, Trigger);
+			_stateMachine = new Statechart(Setup);
 		}
 
 		/// <inheritdoc cref="IStatechart.LogsEnabled"/>
 		public void Run()
 		{
 			_stateMachine.Run();
+		}
+
+		/// <inheritdoc />
+		public void Dispose()
+		{
 		}
 
 		private void Trigger(IStatechartEvent eventTrigger)

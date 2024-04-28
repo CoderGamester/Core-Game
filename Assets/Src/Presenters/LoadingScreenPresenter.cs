@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Presenters
+namespace Game.Presenters
 {
 	/// <summary>
 	/// This Presenter handles the loading screen UI by:

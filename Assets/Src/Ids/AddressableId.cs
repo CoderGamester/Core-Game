@@ -2,30 +2,31 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using GameLovers.AddressablesExtensions;
+using GameLovers.AssetsImporter;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once CheckNamespace
 
-namespace Ids
+namespace Game.Ids
 {
 	public enum AddressableId
 	{
-		Prefabs_Ui_Loading_Screen,
-		Prefabs_Ui_MainHud,
-		Configs_DataConfigs,
-		Configs_GameConfigs,
-		Configs_UiConfigs
+		Addressables_Configs_DataConfigs,
+		Addressables_Configs_GameConfigs,
+		Addressables_Configs_UiConfigs,
+		Addressables_Ui_Loading_Screen,
+		Addressables_Ui_MainHud
 	}
 
 	public enum AddressableLabel
 	{
+		Label_GenerateIds
 	}
 
 	public static class AddressablePathLookup
 	{
-		public static readonly string PrefabsUi = "Prefabs/Ui";
-		public static readonly string Configs = "Configs";
+		public static readonly string AddressablesUi = "Addressables/Ui";
+		public static readonly string AddressablesConfigs = "Addressables/Configs";
 	}
 
 	public static class AddressableConfigLookup
@@ -48,21 +49,35 @@ namespace Ids
 			return _addressableLabelMap[label];
 		}
 
+		public static string ToLabelString(this AddressableLabel label)
+		{
+			return _addressableLabels[(int) label];
+		}
+
 		private static readonly IList<string> _addressableLabels = new List<string>
 		{
+			"GenerateIds"
 		}.AsReadOnly();
 
 		private static readonly IReadOnlyDictionary<string, IList<AddressableConfig>> _addressableLabelMap = new ReadOnlyDictionary<string, IList<AddressableConfig>>(new Dictionary<string, IList<AddressableConfig>>
 		{
+			{"GenerateIds", new List<AddressableConfig>
+				{
+					new AddressableConfig(0, "Addressables/Ui/MainHud.prefab", "Assets/Addressables/Ui/MainHud.prefab", typeof(UnityEngine.GameObject), new [] {"GenerateIds"}),
+					new AddressableConfig(1, "Addressables/Ui/Loading Screen.prefab", "Assets/Addressables/Ui/Loading Screen.prefab", typeof(UnityEngine.GameObject), new [] {"GenerateIds"}),
+					new AddressableConfig(2, "Addressables/Configs/UiConfigs.asset", "Assets/Addressables/Configs/UiConfigs.asset", typeof(GameLovers.UiService.UiConfigs), new [] {"GenerateIds"}),
+					new AddressableConfig(3, "Addressables/Configs/GameConfigs.asset", "Assets/Addressables/Configs/GameConfigs.asset", typeof(Game.Configs.GameConfigs), new [] {"GenerateIds"}),
+					new AddressableConfig(4, "Addressables/Configs/DataConfigs.asset", "Assets/Addressables/Configs/DataConfigs.asset", typeof(Game.Configs.DataConfigs), new [] {"GenerateIds"}),
+				}.AsReadOnly()}
 		});
 
 		private static readonly IList<AddressableConfig> _addressableConfigs = new List<AddressableConfig>
 		{
-			new AddressableConfig(0, "Prefabs/Ui/Loading Screen.prefab", "Assets/Art/Prefabs/Ui/Loading Screen.prefab", typeof(UnityEngine.GameObject), new [] {""}),
-			new AddressableConfig(1, "Prefabs/Ui/MainHud.prefab", "Assets/Art/Prefabs/Ui/MainHud.prefab", typeof(UnityEngine.GameObject), new [] {""}),
-			new AddressableConfig(2, "Configs/DataConfigs.asset", "Assets/ScriptableObjects/Configs/DataConfigs.asset", typeof(Configs.DataConfigs), new [] {""}),
-			new AddressableConfig(3, "Configs/GameConfigs.asset", "Assets/ScriptableObjects/Configs/GameConfigs.asset", typeof(Configs.GameConfigs), new [] {""}),
-			new AddressableConfig(4, "Configs/UiConfigs.asset", "Assets/ScriptableObjects/Configs/UiConfigs.asset", typeof(GameLovers.UiService.UiConfigs), new [] {""})
+			new AddressableConfig(0, "Addressables/Configs/DataConfigs.asset", "Assets/Addressables/Configs/DataConfigs.asset", typeof(Game.Configs.DataConfigs), new [] {"GenerateIds"}),
+			new AddressableConfig(1, "Addressables/Configs/GameConfigs.asset", "Assets/Addressables/Configs/GameConfigs.asset", typeof(Game.Configs.GameConfigs), new [] {"GenerateIds"}),
+			new AddressableConfig(2, "Addressables/Configs/UiConfigs.asset", "Assets/Addressables/Configs/UiConfigs.asset", typeof(GameLovers.UiService.UiConfigs), new [] {"GenerateIds"}),
+			new AddressableConfig(3, "Addressables/Ui/Loading Screen.prefab", "Assets/Addressables/Ui/Loading Screen.prefab", typeof(UnityEngine.GameObject), new [] {"GenerateIds"}),
+			new AddressableConfig(4, "Addressables/Ui/MainHud.prefab", "Assets/Addressables/Ui/MainHud.prefab", typeof(UnityEngine.GameObject), new [] {"GenerateIds"})
 		}.AsReadOnly();
 	}
 }

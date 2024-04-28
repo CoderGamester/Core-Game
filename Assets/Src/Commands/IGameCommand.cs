@@ -1,7 +1,7 @@
 using GameLovers.Services;
-using Logic;
+using Game.Logic;
 
-namespace Commands
+namespace Game.Commands
 {
 	/// <summary>
 	/// Command interface implementation for this game

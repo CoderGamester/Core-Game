@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using GameLovers.UiService;
-using Ids;
-using Presenters;
+using Game.Ids;
+using Game.Presenters;
 
-namespace Services
+namespace Game.Services
 {
 	/// <inheritdoc />
 	/// <remarks>

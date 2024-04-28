@@ -1,4 +1,4 @@
-namespace Ids
+namespace Game.Ids
 {
 	public enum UiSetId
 	{

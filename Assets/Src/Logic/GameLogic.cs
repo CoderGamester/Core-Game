@@ -1,7 +1,8 @@
-using GameLovers.GoogleSheetImporter;
+using GameLovers.ConfigsProvider;
 using GameLovers.Services;
+using Game.Logic.Shared;
 
-namespace Logic
+namespace Game.Logic
 {
 	/// <summary>
 	/// This interface marks the Game Logic as one that needs to initialize it's internal state
@@ -20,9 +21,6 @@ namespace Logic
 	/// </summary>
 	public interface IGameDataProvider
 	{
-		/// <inheritdoc cref="IConfigsProvider"/>
-		IConfigsProvider ConfigsProvider { get; }
-		
 		/// <inheritdoc cref="IAppDataProvider"/>
 		IAppDataProvider AppDataProvider { get; }
 		/// <inheritdoc cref="IGameIdDataProvider"/>
@@ -38,11 +36,6 @@ namespace Logic
 	/// </summary>
 	public interface IGameLogic : IGameDataProvider
 	{
-		/// <inheritdoc cref="IMessageBrokerService"/>
-		IMessageBrokerService MessageBrokerService { get; }
-		/// <inheritdoc cref="ITimeService"/>
-		ITimeService TimeService { get; }
-		
 		/// <inheritdoc cref="IAppLogic"/>
 		IAppLogic AppLogic { get; }
 		/// <inheritdoc cref="IGameIdLogic"/>
@@ -60,14 +53,6 @@ namespace Logic
 	public class GameLogic : IGameLogicInit
 	{
 		/// <inheritdoc />
-		public IMessageBrokerService MessageBrokerService { get; }
-		/// <inheritdoc />
-		public ITimeService TimeService { get; }
-
-		/// <inheritdoc />
-		public IConfigsProvider ConfigsProvider { get; }
-
-		/// <inheritdoc />
 		public IAppDataProvider AppDataProvider => AppLogic;
 		/// <inheritdoc />
 		public IGameIdDataProvider GameIdDataProvider => GameIdLogic;
@@ -81,16 +66,15 @@ namespace Logic
 		/// <inheritdoc />
 		public ICurrencyLogic CurrencyLogic { get; }
 
-		public GameLogic(IMessageBrokerService messageBroker, ITimeService timeService, IDataProvider dataProvider,
-		                 IConfigsProvider configsProvider)
+		public GameLogic(IInstaller installer)
 		{
-			MessageBrokerService = messageBroker;
-			TimeService = timeService;
-			ConfigsProvider = configsProvider;
-			
-			AppLogic = new AppLogic(this, dataProvider);
-			CurrencyLogic = new CurrencyLogic(this, dataProvider);
-			GameIdLogic = new GameIdLogic(this, dataProvider);
+			var configsProvider = installer.Resolve<IConfigsProvider>();
+			var dataProvider = installer.Resolve<IDataProvider>();
+			var timeService = installer.Resolve<ITimeService>();
+		
+			AppLogic = new AppLogic(configsProvider, dataProvider, timeService);
+			CurrencyLogic = new CurrencyLogic(configsProvider, dataProvider, timeService);
+			GameIdLogic = new GameIdLogic(configsProvider, dataProvider, timeService);
 		}
 
 		/// <inheritdoc />

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Ids;
-namespace Data
+using Game.Ids;
+
+namespace Game.Data
 {
 	/// <summary>
 	/// Contains all the data in the scope of the Player 

@@ -1,9 +1,10 @@
 using System;
 using System.ComponentModel;
 using GameLovers.Services;
-using Ids;
-using Logic;
-using Services;
+using Game.Ids;
+using Game.Logic;
+using Game.Logic.Shared;
+using Game.Services;
 using UnityEngine;
 
 public partial class SROptions

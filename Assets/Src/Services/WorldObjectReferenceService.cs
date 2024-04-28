@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem.UI;
 
-namespace Services
+namespace Game.Services
 {
 	/// <summary>
 	/// TODO:

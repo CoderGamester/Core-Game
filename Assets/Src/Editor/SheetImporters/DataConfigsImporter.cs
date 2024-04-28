@@ -1,7 +1,7 @@
-using Configs;
+using Game.Configs;
 using GameLoversEditor.GoogleSheetImporter;
 
-namespace SheetImporters
+namespace Game.SheetImporters
 {
 	/// <inheritdoc />
 	public class DataConfigsImporter : GoogleSheetConfigsImporter<DataConfig, DataConfigs>

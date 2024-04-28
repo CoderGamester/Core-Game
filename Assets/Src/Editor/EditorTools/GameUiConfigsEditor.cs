@@ -1,9 +1,9 @@
 using GameLovers.UiService;
 using GameLoversEditor.UiService;
-using Ids;
+using Game.Ids;
 using UnityEditor;
 
-namespace EditorTools
+namespace Game.EditorTools
 {
 	/// <summary>
 	/// Games custom <see cref="UiConfigsEditor{TSet}"/>

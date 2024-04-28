@@ -1,9 +1,20 @@
+using GameLovers.ConfigsProvider;
 using GameLovers.Services;
-using GameLovers.UiService;
-using Logic;
+using Game.Logic;
 
-namespace Services
+namespace Game.Services
 {
+	/// <summary>
+	/// Use this contract in order to have a standardized Init process stream within the Service being implemented
+	/// </summary>
+	public interface IServiceInit
+	{
+		/// <summary>
+		/// Initializes the service values and functions to properly execute
+		/// </summary>
+		void Init(IGameServices services);
+	}
+
 	/// <summary>
 	/// Provides access to all game's common helper services
 	/// This services are stateless interfaces that establishes a set of available operations with deterministic response
@@ -16,7 +27,9 @@ namespace Services
 	{
 		/// <inheritdoc cref="IDataSaver"/>
 		IDataSaver DataSaver { get; }
-		
+
+		/// <inheritdoc cref="IConfigsProvider"/>
+		IConfigsProvider ConfigsProvider { get; }
 		/// <inheritdoc cref="IMessageBrokerService"/>
 		IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc cref="ICommandService{T}"/>
@@ -29,8 +42,8 @@ namespace Services
 		ITimeService TimeService { get; }
 		/// <inheritdoc cref="ICoroutineService"/>
 		ICoroutineService CoroutineService { get; }
-		/// <inheritdoc cref="INetworkService"/>
-		INetworkService NetworkService { get; }
+		/// <inheritdoc cref="IAnalyticsService"/>
+		IAnalyticsService AnalyticsService { get; }
 		/// <inheritdoc cref="IAssetResolverService"/>
 		IAssetResolverService AssetResolverService { get; }
 		/// <inheritdoc cref="IWorldObjectReferenceService"/>
@@ -56,29 +69,32 @@ namespace Services
 		/// <inheritdoc />
 		public ICoroutineService CoroutineService { get; }
 		/// <inheritdoc />
-		public INetworkService NetworkService { get; }
-		/// <inheritdoc />
 		public IAssetResolverService AssetResolverService { get; }
-
 		/// <inheritdoc />
 		public IWorldObjectReferenceService WorldObjectReferenceService { get; }
+		/// <inheritdoc />
+		public IConfigsProvider ConfigsProvider { get; }
+		/// <inheritdoc />
+		public IAnalyticsService AnalyticsService { get; }
 
-		public GameServices(IMessageBrokerService messageBrokerService, ITimeService timeService, IDataSaver dataSaver,
-		                    IGameLogic gameLogic, IWorldObjectReferenceService worldObjectReference)
+		public GameServices(IInstaller installer)
 		{
-			var networkService = new GameNetworkService();
+			MessageBrokerService = installer.Resolve<IMessageBrokerService>();
+			TimeService = installer.Resolve<ITimeService>();
+			ConfigsProvider = installer.Resolve<IConfigsProvider>();
+			AssetResolverService = installer.Resolve<IAssetResolverService>();
+			AnalyticsService = installer.Resolve<IAnalyticsService>();
+			PoolService = installer.Resolve<IPoolService>();
+			TickService = installer.Resolve<ITickService>();
+			CoroutineService = installer.Resolve<ICoroutineService>();
+		}
 
-			NetworkService = networkService;
-			MessageBrokerService = messageBrokerService;
-			TimeService = timeService;
-			WorldObjectReferenceService = worldObjectReference;
-			DataSaver = dataSaver;
-			
-			CommandService = new CommandService<IGameLogic>(gameLogic, networkService);
-			PoolService = new PoolService();
-			AssetResolverService = new AssetResolverService();
-			TickService =  new TickService();
-			CoroutineService = new CoroutineService();
+		/// <summary>
+		/// <inheritdoc cref="IServiceInit.Init(IGameServices)"/>
+		/// </summary>
+		public void Init()
+		{
+			// Init any needed service
 		}
 	}
 }

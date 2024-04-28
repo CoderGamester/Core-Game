@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using GameLovers;
-using GameLovers.GoogleSheetImporter;
-using Ids;
+using GameLovers.ConfigsProvider;
+using Game.Ids;
 using UnityEngine;
 
-namespace Configs
+namespace Game.Configs
 {
 	[Serializable]
 	public struct DataConfig
@@ -31,6 +31,6 @@ namespace Configs
 		private List<DataConfig> _configs = new List<DataConfig>();
 
 		// ReSharper disable once ConvertToAutoProperty
-		public List<DataConfig> Configs => _configs;
+		public List<DataConfig> Configs { get => _configs; set => _configs = value; }
 	}
 }

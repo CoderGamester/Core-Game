@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using GameLovers;
 
-namespace Ids
+namespace Game.Ids
 {
 	/// <summary>
 	/// Used to reference any entity by an unique Id value

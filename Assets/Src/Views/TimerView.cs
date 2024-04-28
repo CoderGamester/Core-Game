@@ -1,9 +1,9 @@
 using System;
-using Services;
+using Game.Services;
 using TMPro;
 using UnityEngine;
 
-namespace Views
+namespace Game.Views
 {
 	/// <summary>
 	/// This View handles the Timer View in the UI:
