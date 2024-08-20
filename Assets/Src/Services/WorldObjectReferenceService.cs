@@ -4,17 +4,17 @@ using UnityEngine.InputSystem.UI;
 namespace Game.Services
 {
 	/// <summary>
-	/// TODO:
+	/// This service is responsible for providing access to the important GameObjects that are used across the entire game
 	/// </summary>
 	public interface IWorldObjectReferenceService
 	{
 		/// <summary>
-		/// TODO:
+		/// The InputSystem UI module that is used across the game in all scenes
 		/// </summary>
 		InputSystemUIInputModule InputSystem { get; }
 		
 		/// <summary>
-		/// TODO:
+		/// The main camera instance that is used across the game in all scenes
 		/// </summary>
 		Camera MainCamera { get; }
 	}

@@ -69,12 +69,12 @@ namespace Game.Logic
 		public GameLogic(IInstaller installer)
 		{
 			var configsProvider = installer.Resolve<IConfigsProvider>();
-			var dataProvider = installer.Resolve<IDataProvider>();
+			var dataService = installer.Resolve<IDataService>();
 			var timeService = installer.Resolve<ITimeService>();
 		
-			AppLogic = new AppLogic(configsProvider, dataProvider, timeService);
-			CurrencyLogic = new CurrencyLogic(configsProvider, dataProvider, timeService);
-			GameIdLogic = new GameIdLogic(configsProvider, dataProvider, timeService);
+			AppLogic = new AppLogic(configsProvider, dataService, timeService);
+			CurrencyLogic = new CurrencyLogic(configsProvider, dataService, timeService);
+			GameIdLogic = new GameIdLogic(configsProvider, dataService, timeService);
 		}
 
 		/// <inheritdoc />

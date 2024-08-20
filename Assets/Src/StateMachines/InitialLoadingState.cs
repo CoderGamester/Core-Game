@@ -111,8 +111,8 @@ namespace Game.StateMachines
 			appData.LastLoginTime = appData.LoginTime;
 			appData.LoginTime = time;
 			
-			_dataService.AddData(appData);
-			_dataService.AddData(playerData);
+			_dataService.AddOrReplaceData(appData);
+			_dataService.AddOrReplaceData(playerData);
 		}
 	}
 }

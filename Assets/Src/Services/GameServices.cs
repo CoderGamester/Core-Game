@@ -25,9 +25,6 @@ namespace Game.Services
 	/// </remarks>
 	public interface IGameServices
 	{
-		/// <inheritdoc cref="IDataSaver"/>
-		IDataSaver DataSaver { get; }
-
 		/// <inheritdoc cref="IConfigsProvider"/>
 		IConfigsProvider ConfigsProvider { get; }
 		/// <inheritdoc cref="IMessageBrokerService"/>
@@ -53,9 +50,6 @@ namespace Game.Services
 	/// <inheritdoc />
 	public class GameServices : IGameServices
 	{
-		/// <inheritdoc />
-		public IDataSaver DataSaver { get; }
-
 		/// <inheritdoc />
 		public IMessageBrokerService MessageBrokerService { get; }
 		/// <inheritdoc />

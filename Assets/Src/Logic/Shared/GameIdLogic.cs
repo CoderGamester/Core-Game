@@ -48,8 +48,8 @@ namespace Game.Logic.Shared
 		/// <inheritdoc />
 		public IObservableDictionary<UniqueId, GameId> Ids { get; private set; }
 
-		public GameIdLogic(IConfigsProvider configsProvider, IDataProvider dataProvider, ITimeService timeService) :
-			base(configsProvider, dataProvider, timeService)
+		public GameIdLogic(IConfigsProvider configsProvider, IDataService dataService, ITimeService timeService) :
+			base(configsProvider, dataService, timeService)
 		{
 		}
 

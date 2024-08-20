@@ -155,8 +155,8 @@ namespace Game.Logic
 		/// <inheritdoc />
 		public string QuitReason { get; private set; }
 
-		public AppLogic(IConfigsProvider configsProvider, IDataProvider dataProvider, ITimeService timeService) :
-			base(configsProvider, dataProvider, timeService)
+		public AppLogic(IConfigsProvider configsProvider, IDataService dataService, ITimeService timeService) :
+			base(configsProvider, dataService, timeService)
 		{
 		}
 
@@ -190,6 +190,7 @@ namespace Game.Logic
 		public void QuitGame(string reason)
 		{
 			QuitReason = reason;
+
 #if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
 #else

@@ -49,7 +49,7 @@ namespace Game
 			installer.Bind<ICoroutineService>(new CoroutineService());
 			installer.Bind<IAssetResolverService>(new AssetResolverService());
 			installer.Bind<IConfigsAdder, IConfigsProvider>(new ConfigsProvider());
-			installer.Bind<IDataService, IDataSaver, IDataLoader, IDataProvider>(dataService);
+			installer.Bind<IDataService, IDataProvider>(dataService);
 
 			var gameLogic = new GameLogic(installer);
 			var gameServices = new GameServices(installer);
@@ -131,6 +131,7 @@ namespace Game
 
 			_onApplicationAlreadyQuitFlag = true;
 
+			_dataService.SaveAllData();
 			_stateMachine.Dispose();
 			_services.MessageBrokerService.Publish(new ApplicationQuitMessage());
 			_services.AnalyticsService.SessionCalls.SessionEnd(_gameLogic.AppLogic.QuitReason);
