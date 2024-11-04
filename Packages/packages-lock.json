@@ -57,7 +57,7 @@
       "dependencies": {
         "com.gamelovers.dataextensions": "0.6.2"
       },
-      "hash": "f43d4ab1b0d70f010b63f510ad6919c9f0d38c55"
+      "hash": "a0cb568db3105be064d8ac41057d4d21739872cd"
     },
     "com.gamelovers.statechart": {
       "version": "https://github.com/CoderGamester/com.gamelovers.statechart.git",
@@ -73,7 +73,7 @@
       "dependencies": {
         "com.unity.addressables": "1.22.0"
       },
-      "hash": "2bab5ef9d251ca0a9f84dbfdd88c928574aaadd4"
+      "hash": "433b499b3c1c6bdb070b03ce35849e87d6d75839"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -336,6 +336,13 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.unity.uiextensions": {
+      "version": "https://github.com/Unity-UI-Extensions/com.unity.uiextensions.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "35b9985bf238cde2bad9c8e107c686ba3194471c"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
