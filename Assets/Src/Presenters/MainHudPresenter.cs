@@ -7,6 +7,9 @@ using Game.Services;
 using TMPro;
 using UnityEngine;
 using Game.Views;
+using UnityEngine.UI;
+using System;
+using Game.Messages;
 
 namespace Game.Presenters
 {
@@ -20,6 +23,7 @@ namespace Game.Presenters
 		[SerializeField] private TextMeshProUGUI _version;
 		[SerializeField] private TextMeshProUGUI _softCurrencyText;
 		[SerializeField] private TextMeshProUGUI _hardCurrencyText;
+		[SerializeField] private Button _gameOverButton;
 
 		private IGameDataProvider _dataProvider;
 		private IGameServices _services;
@@ -30,6 +34,7 @@ namespace Game.Presenters
 			_services = MainInstaller.Resolve<IGameServices>();
 
 			_timer.Init(_services);
+			_gameOverButton.onClick.AddListener(GameOverClicked);
 		}
 
 		private void Start()
@@ -54,6 +59,11 @@ namespace Game.Presenters
 		private void OnHardCurrencyUpdated(GameId currency, int amountBefore, int amountAfter, ObservableUpdateType updateType)
 		{
 			_hardCurrencyText.text = $"HC: {amountAfter.ToString()}";
+		}
+
+		private void GameOverClicked()
+		{
+			_services.MessageBrokerService.Publish(new OnGameOverMessage());
 		}
 	}
 }
