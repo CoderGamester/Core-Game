@@ -1,20 +1,10 @@
 using GameLovers.ConfigsProvider;
 using GameLovers.Services;
 using Game.Logic;
+using UnityEditor;
 
 namespace Game.Services
 {
-	/// <summary>
-	/// Use this contract in order to have a standardized Init process stream within the Service being implemented
-	/// </summary>
-	public interface IServiceInit
-	{
-		/// <summary>
-		/// Initializes the service values and functions to properly execute
-		/// </summary>
-		void Init(IGameServices services);
-	}
-
 	/// <summary>
 	/// Provides access to all game's common helper services
 	/// This services are stateless interfaces that establishes a set of available operations with deterministic response
@@ -44,7 +34,7 @@ namespace Game.Services
 		/// <inheritdoc cref="IAssetResolverService"/>
 		IAssetResolverService AssetResolverService { get; }
 		/// <inheritdoc cref="IWorldObjectReferenceService"/>
-		IWorldObjectReferenceService WorldObjectReferenceService { get; }
+		//IWorldObjectReferenceService WorldObjectReferenceService { get; }
 	}
 
 	/// <inheritdoc />
@@ -65,7 +55,7 @@ namespace Game.Services
 		/// <inheritdoc />
 		public IAssetResolverService AssetResolverService { get; }
 		/// <inheritdoc />
-		public IWorldObjectReferenceService WorldObjectReferenceService { get; }
+		//public IWorldObjectReferenceService WorldObjectReferenceService { get; }
 		/// <inheritdoc />
 		public IConfigsProvider ConfigsProvider { get; }
 		/// <inheritdoc />
@@ -74,21 +64,14 @@ namespace Game.Services
 		public GameServices(IInstaller installer)
 		{
 			MessageBrokerService = installer.Resolve<IMessageBrokerService>();
-			TimeService = installer.Resolve<ITimeService>();
-			ConfigsProvider = installer.Resolve<IConfigsProvider>();
-			AssetResolverService = installer.Resolve<IAssetResolverService>();
-			AnalyticsService = installer.Resolve<IAnalyticsService>();
+			CommandService = installer.Resolve<ICommandService<IGameLogic>>();
 			PoolService = installer.Resolve<IPoolService>();
 			TickService = installer.Resolve<ITickService>();
+			TimeService = installer.Resolve<ITimeService>();
 			CoroutineService = installer.Resolve<ICoroutineService>();
-		}
-
-		/// <summary>
-		/// <inheritdoc cref="IServiceInit.Init(IGameServices)"/>
-		/// </summary>
-		public void Init()
-		{
-			// Init any needed service
+			AssetResolverService = installer.Resolve<IAssetResolverService>();
+			ConfigsProvider = installer.Resolve<IConfigsProvider>();
+			AnalyticsService = installer.Resolve<IAnalyticsService>();
 		}
 	}
 }

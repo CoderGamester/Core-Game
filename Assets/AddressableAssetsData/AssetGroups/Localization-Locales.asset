@@ -15,7 +15,7 @@ MonoBehaviour:
   m_GroupName: Localization-Locales
   m_Data:
     m_SerializedData: []
-  m_GUID: ad2e5f6565a5da14b9681c11d8aa22f0
+  m_GUID: 03f9c17a453d9c2428c006c0dce58063
   m_SerializeEntries:
   - m_GUID: c8fa0168b9a2df144b8ca2cfdc9ef610
     m_Address: English (en)
@@ -27,5 +27,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: eaa709b9c4701468a9a1e076e2610668, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 1b7bd28f86dafdd4a96ca62b1c0a2d18, type: 2}
-    - {fileID: 11400000, guid: f1d3916ede0db5a4094a757484af0542, type: 2}
+    - {fileID: 11400000, guid: 1414aed886563064cb3b30dedd01b955, type: 2}
+    - {fileID: 11400000, guid: 21846c2aaaf3a3c4a9636fe60f411449, type: 2}

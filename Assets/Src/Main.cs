@@ -37,32 +37,36 @@ namespace Game
 		private void Awake()
 		{
 			var installer = new Installer();
-			var dataService = new DataService();
 			var worldObjectReference = new WorldObjectReferenceService(_inputSystem, _mainCamera);
 
 			installer.Bind<IMessageBrokerService>(new MessageBrokerService());
 			installer.Bind<ITimeService>(new TimeService());
-			installer.Bind<IGameUiServiceInit, IGameUiService>(new GameUiService(new UiAssetLoader()));
+			installer.Bind<GameUiService, IGameUiServiceInit, IGameUiService>(new GameUiService(new UiAssetLoader()));
 			installer.Bind<IPoolService>(new PoolService());
 			installer.Bind<ITickService>(new TickService());
 			installer.Bind<IAnalyticsService>(new AnalyticsService());
 			installer.Bind<ICoroutineService>(new CoroutineService());
 			installer.Bind<IAssetResolverService>(new AssetResolverService());
-			installer.Bind<IConfigsAdder, IConfigsProvider>(new ConfigsProvider());
-			installer.Bind<IDataService, IDataProvider>(dataService);
+			installer.Bind<ConfigsProvider, IConfigsAdder, IConfigsProvider>(new ConfigsProvider());
+			installer.Bind<DataService, IDataService, IDataProvider>(new DataService());
 
 			var gameLogic = new GameLogic(installer);
+
+			installer.Bind<IGameLogicInit>(gameLogic);
+			installer.Bind<IGameDataProvider>(gameLogic);
+			installer.Bind<ICommandService<IGameLogic>>(new CommandService<IGameLogic>(gameLogic, installer.Resolve<IMessageBrokerService>()));
+
 			var gameServices = new GameServices(installer);
 
+			installer.Bind<IGameServices>(gameServices);
 			MainInstaller.Bind<IGameDataProvider>(gameLogic);
 			MainInstaller.Bind<IGameServices>(gameServices);
 
-			_dataService = dataService;
+			_dataService = installer.Resolve<IDataService>();
 			_gameLogic = gameLogic;
 			_services = gameServices;
-			_stateMachine = new GameStateMachine(gameLogic, gameServices, installer);
+			_stateMachine = new GameStateMachine(installer);
 			Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
 			System.Threading.Tasks.TaskScheduler.UnobservedTaskException += TaskExceptionLogging;
 
 			DontDestroyOnLoad(this);
@@ -77,13 +81,11 @@ namespace Game
 
 		private void Start()
 		{
-			_services.Init();
-
 			_ = OnStart();
 		}
 
 		private async UniTask OnStart()
-		{
+		{			
 			//TouchSimulation.Enable();
 			EnhancedTouchSupport.Enable();
 			InitAtt();

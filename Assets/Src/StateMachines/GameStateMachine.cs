@@ -24,13 +24,13 @@ namespace Game.StateMachines
 			set => _stateMachine.LogsEnabled = value;
 		}
 
-		public GameStateMachine(IGameLogicInit gameLogic, IGameServices services, IInstaller installer)
+		public GameStateMachine(IInstaller installer)
 		{
-			_services = services;
+			_services = installer.Resolve<IGameServices>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
-			
-			_initialLoadingState = new InitialLoadingState(gameLogic, _services, installer);
-			_gameplayState = new GameplayState(_services, installer, Trigger);
+
+			_initialLoadingState = new InitialLoadingState(installer);
+			_gameplayState = new GameplayState(installer, Trigger);
 			_stateMachine = new Statechart(Setup);
 		}
 

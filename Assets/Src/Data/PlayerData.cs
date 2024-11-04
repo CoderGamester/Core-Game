@@ -10,6 +10,8 @@ namespace Game.Data
 	[Serializable]
 	public class PlayerData
 	{
+		public ulong UniqueIdCounter;
+
 		public Dictionary<UniqueId, GameId> GameIds = new Dictionary<UniqueId, GameId>(new UniqueIdKeyComparer());
 		public Dictionary<GameId, int> Currencies = new Dictionary<GameId, int>(new GameIdLookup.GameIdComparer())
 		{

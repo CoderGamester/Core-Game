@@ -10,6 +10,7 @@ using Game.Logic;
 using Newtonsoft.Json;
 using Game.Services;
 using UnityEngine;
+using Game.Commands;
 
 namespace Game.StateMachines
 {
@@ -23,11 +24,11 @@ namespace Game.StateMachines
 		private readonly IGameUiServiceInit _uiService;
 		private readonly IConfigsAdder _configsAdder;
 		private readonly IDataService _dataService;
-		
-		public InitialLoadingState(IGameLogicInit gameLogic, IGameServices services, IInstaller installer)
+
+		public InitialLoadingState(IInstaller installer)
 		{
-			_gameLogic = gameLogic;
-			_services = services;
+			_gameLogic = installer.Resolve<IGameLogicInit>();
+			_services = installer.Resolve<IGameServices>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
 			_configsAdder = installer.Resolve<IConfigsAdder>();
 			_dataService = installer.Resolve<IDataService>();
@@ -49,7 +50,7 @@ namespace Game.StateMachines
 			dataLoading.OnEnter(InitPlugins);
 			dataLoading.OnEnter(LoadGameData);
 			dataLoading.WaitingFor(LoadConfigs).Target(uiLoading);
-			dataLoading.OnExit(_gameLogic.Init);
+			dataLoading.OnExit(InitGameLogic);
 			
 			uiLoading.WaitingFor(LoadInitialUi).Target(final);
 			
@@ -79,11 +80,18 @@ namespace Game.StateMachines
 			await Task.WhenAll(_uiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi));
 		}
 
+		private void InitGameLogic()
+		{
+			LoadGameData();
+			_gameLogic.Init(_dataService, _services);
+			_services.CommandService.ExecuteCommand(new SetupFirstTimePlayerCommand());
+		}
+
 		private async Task LoadConfigs()
 		{
-			var uiConfigs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Addressables_Configs_UiConfigs.GetConfig().Address);
-			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Addressables_Configs_GameConfigs.GetConfig().Address);
-			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Addressables_Configs_DataConfigs.GetConfig().Address);
+			var uiConfigs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Prefabs_Configs_UiConfigs.GetConfig().Address);
+			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Prefabs_Configs_GameConfigs.GetConfig().Address);
+			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Prefabs_Configs_DataConfigs.GetConfig().Address);
 			
 			_uiService.Init(uiConfigs);
 			_configsAdder.AddSingletonConfig(gameConfigs.Config);
@@ -97,22 +105,24 @@ namespace Game.StateMachines
 		private void LoadGameData()
 		{
 			var time = _services.TimeService.DateTimeUtcNow;
-			var appDataJson = PlayerPrefs.GetString(nameof(AppData), "");
-			var playerDataJson = PlayerPrefs.GetString(nameof(PlayerData), "");
-			var appData = string.IsNullOrEmpty(appDataJson) ? new AppData() : JsonConvert.DeserializeObject<AppData>(appDataJson);
-			var playerData = string.IsNullOrEmpty(playerDataJson) ? new PlayerData() : JsonConvert.DeserializeObject<PlayerData>(playerDataJson);
+			var appData = _dataService.LoadData<AppData>();
+			var rngData = _dataService.LoadData<RngData>();
+			var playerData = _dataService.LoadData<PlayerData>();
 
-			if (string.IsNullOrEmpty(appDataJson))
+			// First time opens the app
+			if (appData.SessionCount == 0)
 			{
+				var seed = (int)(time.Ticks & int.MaxValue);
+
 				appData.FirstLoginTime = time;
 				appData.LoginTime = time;
+				rngData.Seed = seed;
+				rngData.State = RngService.GenerateRngState(seed);
 			}
-			
+
+			appData.SessionCount += 1;
 			appData.LastLoginTime = appData.LoginTime;
 			appData.LoginTime = time;
-			
-			_dataService.AddOrReplaceData(appData);
-			_dataService.AddOrReplaceData(playerData);
 		}
 	}
 }

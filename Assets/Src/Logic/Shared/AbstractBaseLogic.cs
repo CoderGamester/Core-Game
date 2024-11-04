@@ -9,14 +9,14 @@ namespace Game.Logic.Shared
 	public abstract class AbstractBaseLogic<TData> where TData : class
 	{
 		protected readonly IConfigsProvider ConfigsProvider;
-		protected readonly IDataService DataService;
+		protected readonly IDataProvider DataService;
 		protected readonly ITimeService TimeService;
 
 		protected TData Data => DataService.GetData<TData>();
 
 		private AbstractBaseLogic() { }
 
-		public AbstractBaseLogic(IConfigsProvider configsProvider, IDataService dataService, ITimeService timeService)
+		public AbstractBaseLogic(IConfigsProvider configsProvider, IDataProvider dataService, ITimeService timeService)
 		{
 			ConfigsProvider = configsProvider;
 			DataService = dataService;

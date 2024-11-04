@@ -1,6 +1,7 @@
 using GameLovers.ConfigsProvider;
 using GameLovers.Services;
 using Game.Logic.Shared;
+using Game.Services;
 
 namespace Game.Logic
 {
@@ -23,6 +24,10 @@ namespace Game.Logic
 	{
 		/// <inheritdoc cref="IAppDataProvider"/>
 		IAppDataProvider AppDataProvider { get; }
+		/// <inheritdoc cref="IRngDataProvider"/>
+		IRngDataProvider RngDataProvider { get; }
+		/// <inheritdoc cref="IEntityFactoryDataProvider"/>
+		IEntityFactoryDataProvider EntityFactoryDataProvider { get; }
 		/// <inheritdoc cref="IGameIdDataProvider"/>
 		IGameIdDataProvider GameIdDataProvider { get; }
 		/// <inheritdoc cref="ICurrencyDataProvider"/>
@@ -38,22 +43,36 @@ namespace Game.Logic
 	{
 		/// <inheritdoc cref="IAppLogic"/>
 		IAppLogic AppLogic { get; }
+		/// <inheritdoc cref="IRngLogic"/>
+		IRngLogic RngLogic { get; }
+		/// <inheritdoc cref="IEntityFactoryLogic"/>
+		IEntityFactoryLogic EntityFactoryLogic { get; }
 		/// <inheritdoc cref="IGameIdLogic"/>
 		IGameIdLogic GameIdLogic { get; }
 		/// <inheritdoc cref="ICurrencyLogic"/>
 		ICurrencyLogic CurrencyLogic { get; }
 	}
 
-	/// <inheritdoc cref="IGameLogic"/>
-	public interface IGameLogicInit : IGameLogic, IGameLogicInitializer
+	/// <summary>
+	/// This interface provides the contract to initialize the Game Logic
+	/// </summary>
+	public interface IGameLogicInit
 	{
+		/// <summary>
+		/// Initializes the Game Logic state to it's default initial values
+		/// </summary>
+		void Init(IDataService dataService, IGameServices gameServices);
 	}
 
 	/// <inheritdoc cref="IGameLogic"/>
-	public class GameLogic : IGameLogicInit
+	public class GameLogic : IGameLogic, IGameLogicInit
 	{
 		/// <inheritdoc />
 		public IAppDataProvider AppDataProvider => AppLogic;
+		/// <inheritdoc />
+		public IRngDataProvider RngDataProvider => RngLogic;
+		/// <inheritdoc />
+		public IEntityFactoryDataProvider EntityFactoryDataProvider => EntityFactoryLogic;
 		/// <inheritdoc />
 		public IGameIdDataProvider GameIdDataProvider => GameIdLogic;
 		/// <inheritdoc />
@@ -61,6 +80,10 @@ namespace Game.Logic
 		
 		/// <inheritdoc />
 		public IAppLogic AppLogic { get; }
+		/// <inheritdoc />
+		public IRngLogic RngLogic { get; private set; }
+		/// <inheritdoc />
+		public IEntityFactoryLogic EntityFactoryLogic { get; }
 		/// <inheritdoc />
 		public IGameIdLogic GameIdLogic { get; }
 		/// <inheritdoc />
@@ -71,17 +94,21 @@ namespace Game.Logic
 			var configsProvider = installer.Resolve<IConfigsProvider>();
 			var dataService = installer.Resolve<IDataService>();
 			var timeService = installer.Resolve<ITimeService>();
-		
+
 			AppLogic = new AppLogic(configsProvider, dataService, timeService);
+			EntityFactoryLogic = new EntityFactoryLogic(this, configsProvider, dataService, timeService);
 			CurrencyLogic = new CurrencyLogic(configsProvider, dataService, timeService);
 			GameIdLogic = new GameIdLogic(configsProvider, dataService, timeService);
 		}
 
 		/// <inheritdoc />
-		public void Init()
+		public void Init(IDataService dataService, IGameServices gameServices)
 		{
+			// IMPORTANT: Order of execution is very important in this method
+
+			RngLogic = new RngLogic(dataService);
+
 			// ReSharper disable PossibleNullReferenceException
-			
 			(CurrencyLogic as IGameLogicInitializer).Init();
 			(GameIdLogic as IGameLogicInitializer).Init();
 		}

@@ -20,7 +20,7 @@ namespace Game.Data
 		public DateTime FirstLoginTime;
 		public DateTime LastLoginTime;
 		public DateTime LoginTime;
-		public bool IsFirstSession;
+		public int SessionCount;
 		public string Environment;
 		public string DeviceId;
 		public DateTime GameReviewDate;
@@ -28,6 +28,8 @@ namespace Game.Data
 		public bool HapticEnabled = true;
 		public int FpsTarget = 30;
 		public QualityLevel GraphicQuality = QualityLevel.Medium;
+
+		public bool IsFirstSession => SessionCount <= 1;
 
 		/// <summary>
 		/// Copies base values for when user logs in to a new environment.
