@@ -12,10 +12,11 @@ namespace Game.StateMachines
 	public class GameStateMachine : IDisposable
 	{
 		private readonly IStatechart _stateMachine;
-		private readonly IGameServices _services;
+		private readonly IGameServicesLocator _services;
 		private readonly IGameUiServiceInit _uiService;
 		private readonly InitialLoadingState _initialLoadingState;
 		private readonly GameplayState _gameplayState;
+		private readonly MainMenuState _mainMenuState;
 
 		/// <inheritdoc cref="IStateMachine.LogsEnabled"/>
 		public bool LogsEnabled
@@ -26,11 +27,12 @@ namespace Game.StateMachines
 
 		public GameStateMachine(IInstaller installer)
 		{
-			_services = installer.Resolve<IGameServices>();
+			_services = installer.Resolve<IGameServicesLocator>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
 
 			_initialLoadingState = new InitialLoadingState(installer);
 			_gameplayState = new GameplayState(installer, Trigger);
+			_mainMenuState = new MainMenuState(installer, Trigger);
 			_stateMachine = new Statechart(Setup);
 		}
 
@@ -55,14 +57,17 @@ namespace Game.StateMachines
 			var initial = stateFactory.Initial("Initial");
 			var final = stateFactory.Final("Final");
 			var initialLoading = stateFactory.Nest("Initial Loading");
+			var mainMenu = stateFactory.Nest("Main Menu");
 			var game = stateFactory.Nest("Game");
 			
 			initial.Transition().Target(initialLoading);
 			initial.OnExit(SubscribeEvents);
 			
-			initialLoading.Nest(_initialLoadingState.Setup).Target(game);
-			
-			game.Nest(_gameplayState.Setup).Target(final);
+			initialLoading.Nest(_initialLoadingState.Setup).Target(mainMenu);
+
+			mainMenu.Nest(_mainMenuState.Setup).Target(game);
+
+			game.Nest(_gameplayState.Setup).Target(mainMenu);
 			
 			final.OnEnter(UnsubscribeEvents);
 		}

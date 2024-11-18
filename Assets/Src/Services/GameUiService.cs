@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using GameLovers.UiService;
 using Game.Ids;
 using Game.Presenters;
+using Cysharp.Threading.Tasks;
 
 namespace Game.Services
 {
@@ -16,7 +17,7 @@ namespace Game.Services
 		/// It will update the <see cref="LoadingScreenPresenter"/> value based on the current loading status to a max
 		/// value defined by the given <paramref name="loadingCap"/>
 		/// </summary>
-		Task LoadGameUiSet(UiSetId uiSetId, float loadingCap);
+		UniTask LoadGameUiSet(UiSetId uiSetId, float loadingCap);
 	}
 
 	/// <inheritdoc cref="IGameUiService"/>
@@ -32,19 +33,17 @@ namespace Game.Services
 		}
 		
 		/// <inheritdoc />
-		public async Task LoadGameUiSet(UiSetId uiSetId, float loadingCap)
+		public async UniTask LoadGameUiSet(UiSetId uiSetId, float loadingCap)
 		{
 			var loadingScreen = GetUi<LoadingScreenPresenter>();
 			var tasks = LoadUiSetAsync((int) uiSetId);
 			var initialLoadingPercentage = loadingScreen.LoadingPercentage;
-			var loadingBuffer = tasks.Length / loadingCap - initialLoadingPercentage;
+			var loadingBuffer = tasks.Count / loadingCap - initialLoadingPercentage;
 			var loadedUiCount = 0f;
 
 			// Load all initial uis
-			foreach (var taskTemplate in tasks)
+			await foreach (var task in UniTask.WhenEach(tasks))
 			{
-				await await taskTemplate;
-
 				loadedUiCount++;
 
 				loadingScreen.SetLoadingPercentage(initialLoadingPercentage + loadedUiCount / loadingBuffer);

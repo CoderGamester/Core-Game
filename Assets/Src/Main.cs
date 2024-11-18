@@ -13,6 +13,7 @@ using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.UI;
 using System.Collections;
 using Game.Messages;
+using GameLovers.AssetsImporter;
 
 // ReSharper disable once CheckNamespace
 
@@ -27,8 +28,8 @@ namespace Game
 		[SerializeField] private Camera _mainCamera;
 		
 		private GameStateMachine _stateMachine;
-		private GameServices _services;
-		private IGameLogic _gameLogic;
+		private GameServicesLocator _services;
+		private IGameLogicLocator _gameLogic;
 		private IDataService _dataService;
 		private Coroutine _pauseCoroutine;
 		private bool _onApplicationPauseFlag;
@@ -46,21 +47,21 @@ namespace Game
 			installer.Bind<ITickService>(new TickService());
 			installer.Bind<IAnalyticsService>(new AnalyticsService());
 			installer.Bind<ICoroutineService>(new CoroutineService());
-			installer.Bind<IAssetResolverService>(new AssetResolverService());
+			installer.Bind<AssetResolverService, IAssetResolverService, IAssetAdderService>(new AssetResolverService());
 			installer.Bind<ConfigsProvider, IConfigsAdder, IConfigsProvider>(new ConfigsProvider());
 			installer.Bind<DataService, IDataService, IDataProvider>(new DataService());
 
-			var gameLogic = new GameLogic(installer);
+			var gameLogic = new GameLogicLocator(installer);
 
-			installer.Bind<IGameLogicInit>(gameLogic);
-			installer.Bind<IGameDataProvider>(gameLogic);
-			installer.Bind<ICommandService<IGameLogic>>(new CommandService<IGameLogic>(gameLogic, installer.Resolve<IMessageBrokerService>()));
+			installer.Bind<IGameLogicLocatorInit>(gameLogic);
+			installer.Bind<IGameDataProviderLocator>(gameLogic);
+			installer.Bind<ICommandService<IGameLogicLocator>>(new CommandService<IGameLogicLocator>(gameLogic, installer.Resolve<IMessageBrokerService>()));
 
-			var gameServices = new GameServices(installer);
+			var gameServices = new GameServicesLocator(installer);
 
-			installer.Bind<IGameServices>(gameServices);
-			MainInstaller.Bind<IGameDataProvider>(gameLogic);
-			MainInstaller.Bind<IGameServices>(gameServices);
+			installer.Bind<IGameServicesLocator>(gameServices);
+			MainInstaller.Bind<IGameDataProviderLocator>(gameLogic);
+			MainInstaller.Bind<IGameServicesLocator>(gameServices);
 
 			_dataService = installer.Resolve<IDataService>();
 			_gameLogic = gameLogic;

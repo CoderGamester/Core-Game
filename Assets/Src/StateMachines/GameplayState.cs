@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using GameLovers.Services;
 using GameLovers.StatechartMachine;
 using Game.Ids;
@@ -9,6 +8,9 @@ using Game.Presenters;
 using Game.Messages;
 using Game.Commands;
 using Game.Logic;
+using Cysharp.Threading.Tasks;
+using UnityEngine.SceneManagement;
+using Game.Utils;
 
 namespace Game.StateMachines
 {
@@ -20,16 +22,17 @@ namespace Game.StateMachines
 		public static readonly IStatechartEvent GAME_OVER_EVENT = new StatechartEvent("Game Over Event");
 
 		private static readonly IStatechartEvent RESTART_CLICKED_EVENT = new StatechartEvent("Restart Button Clicked Event");
+		private static readonly IStatechartEvent MENU_CLICKED_EVENT = new StatechartEvent("Menu Clicked Event");
 
 		private readonly IGameUiService _uiService;
-		private readonly IGameServices _services;
-		private readonly IGameDataProvider _gameDataProvider;
+		private readonly IGameServicesLocator _services;
+		private readonly IGameDataProviderLocator _gameDataProvider;
 		private readonly Action<IStatechartEvent> _statechartTrigger;
 
 		public GameplayState(IInstaller installer, Action<IStatechartEvent> statechartTrigger)
 		{
-			_gameDataProvider = installer.Resolve<IGameDataProvider>();
-			_services = installer.Resolve<IGameServices>();
+			_gameDataProvider = installer.Resolve<IGameDataProviderLocator>();
+			_services = installer.Resolve<IGameServicesLocator>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
 			_statechartTrigger = statechartTrigger;
 		}
@@ -61,8 +64,10 @@ namespace Game.StateMachines
 
 			gameOver.OnEnter(OpenGameOverUi);
 			gameOver.Event(RESTART_CLICKED_EVENT).OnTransition(RestartGame).Target(gameStateCheck);
+			gameOver.Event(MENU_CLICKED_EVENT).Target(final);
 			gameOver.OnExit(CloseGameOverUi);
 
+			final.OnEnter(UnloadAssets);
 			final.OnEnter(UnsubscribeEvents);
 		}
 
@@ -70,6 +75,7 @@ namespace Game.StateMachines
 		{
 			_services.MessageBrokerService.Subscribe<OnGameOverMessage>(OnGameOverMessage);
 			_services.MessageBrokerService.Subscribe<OnGameRestartClickedMessage>(OnGameRestartClickedMessage);
+			_services.MessageBrokerService.Subscribe<OnReturnMenuClickedMessage>(OnMenutClickedMessage);
 		}
 
 		private void UnsubscribeEvents()
@@ -80,6 +86,11 @@ namespace Game.StateMachines
 		private void OnGameOverMessage(OnGameOverMessage message)
 		{
 			_statechartTrigger(GAME_OVER_EVENT);
+		}
+
+		private void OnMenutClickedMessage(OnReturnMenuClickedMessage message)
+		{
+			_statechartTrigger(MENU_CLICKED_EVENT);
 		}
 
 		private void OnGameRestartClickedMessage(OnGameRestartClickedMessage message)
@@ -104,7 +115,7 @@ namespace Game.StateMachines
 
 		private void OpenGameplayUi()
 		{
-			_ = _uiService.OpenUiAsync<MainHudPresenter>();
+			_uiService.OpenUiAsync<MainHudPresenter>().Forget();
 		}
 
 		private void CloseGameplayUi()
@@ -114,7 +125,7 @@ namespace Game.StateMachines
 
 		private void OpenGameOverUi()
 		{
-			_ = _uiService.OpenUiAsync<GameOverScreenPresenter>();
+			_uiService.OpenUiAsync<GameOverScreenPresenter>().Forget();
 		}
 
 		private void CloseGameOverUi()
@@ -122,12 +133,17 @@ namespace Game.StateMachines
 			_uiService.CloseUi<GameOverScreenPresenter>();
 		}
 
-		private async Task LoadGameplayAssets()
+		private async UniTask LoadGameplayAssets()
 		{
-			await _uiService.LoadGameUiSet(UiSetId.GameplayUi, 0.8f);
-			
-			GC.Collect();
-			Resources.UnloadUnusedAssets();
+			await UniTask.WhenAll(
+				_uiService.LoadGameUiSet(UiSetId.GameplayUi, 0.8f),
+				_services.AssetResolverService.LoadSceneAsync(SceneId.Game, LoadSceneMode.Additive));
+			await Resources.UnloadUnusedAssets().ToUniTask();
+		}
+
+		private void UnloadAssets()
+		{
+			_services.AssetResolverService.UnloadSceneAsync(SceneId.Game).Forget();
 		}
 	}
 }

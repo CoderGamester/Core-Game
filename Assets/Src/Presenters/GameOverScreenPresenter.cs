@@ -2,6 +2,7 @@
 using Game.Services;
 using GameLovers.Services;
 using GameLovers.UiService;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,19 +15,26 @@ namespace Game.Presenters
 	public class GameOverScreenPresenter : UiPresenter
 	{
 		[SerializeField] private Button _restartButton;
+		[SerializeField] private Button _menuButton;
 
-		private IGameServices _services;
+		private IGameServicesLocator _services;
 
 		private void Awake()
 		{
-			_services = MainInstaller.Resolve<IGameServices>();
+			_services = MainInstaller.Resolve<IGameServicesLocator>();
 
 			_restartButton.onClick.AddListener(Restart);
+			_menuButton.onClick.AddListener(ReturnMenu);
+		}
+
+		private void ReturnMenu()
+		{
+			_services.MessageBrokerService.PublishSafe(new OnReturnMenuClickedMessage());
 		}
 
 		private void Restart()
 		{
-			_services.MessageBrokerService.Publish(new OnGameRestartClickedMessage());
+			_services.MessageBrokerService.PublishSafe(new OnGameRestartClickedMessage());
 		}
 	}
 }

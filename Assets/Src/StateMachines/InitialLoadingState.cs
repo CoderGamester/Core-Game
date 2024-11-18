@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Game.Configs;
 using Game.Data;
 using GameLovers.ConfigsProvider;
@@ -7,10 +6,11 @@ using GameLovers.StatechartMachine;
 using GameLovers.UiService;
 using Game.Ids;
 using Game.Logic;
-using Newtonsoft.Json;
 using Game.Services;
 using UnityEngine;
 using Game.Commands;
+using Cysharp.Threading.Tasks;
+using GameLovers.AssetsImporter;
 
 namespace Game.StateMachines
 {
@@ -19,19 +19,21 @@ namespace Game.StateMachines
 	/// </summary>
 	internal class InitialLoadingState
 	{
-		private readonly IGameServices _services;
-		private readonly IGameLogicInit _gameLogic;
+		private readonly IGameServicesLocator _services;
+		private readonly IGameLogicLocatorInit _gameLogic;
 		private readonly IGameUiServiceInit _uiService;
 		private readonly IConfigsAdder _configsAdder;
 		private readonly IDataService _dataService;
+		private readonly IAssetAdderService _assetAdderService;
 
 		public InitialLoadingState(IInstaller installer)
 		{
-			_gameLogic = installer.Resolve<IGameLogicInit>();
-			_services = installer.Resolve<IGameServices>();
+			_gameLogic = installer.Resolve<IGameLogicLocatorInit>();
+			_services = installer.Resolve<IGameServicesLocator>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
 			_configsAdder = installer.Resolve<IConfigsAdder>();
 			_dataService = installer.Resolve<IDataService>();
+			_assetAdderService = installer.Resolve<IAssetAdderService>();
 		}
 
 		/// <summary>
@@ -75,9 +77,9 @@ namespace Game.StateMachines
 			}
 		}
 
-		private async Task LoadInitialUi()
+		private async UniTask LoadInitialUi()
 		{
-			await Task.WhenAll(_uiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi));
+			await UniTask.WhenAll(_uiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi));
 		}
 
 		private void InitGameLogic()
@@ -87,19 +89,34 @@ namespace Game.StateMachines
 			_services.CommandService.ExecuteCommand(new SetupFirstTimePlayerCommand());
 		}
 
-		private async Task LoadConfigs()
+		private async UniTask LoadConfigs()
 		{
-			var uiConfigs = await _services.AssetResolverService.LoadAssetAsync<UiConfigs>(AddressableId.Prefabs_Configs_UiConfigs.GetConfig().Address);
-			var gameConfigs = await _services.AssetResolverService.LoadAssetAsync<GameConfigs>(AddressableId.Prefabs_Configs_GameConfigs.GetConfig().Address);
-			var dataConfigs = await _services.AssetResolverService.LoadAssetAsync<DataConfigs>(AddressableId.Prefabs_Configs_DataConfigs.GetConfig().Address);
-			
-			_uiService.Init(uiConfigs);
-			_configsAdder.AddSingletonConfig(gameConfigs.Config);
-			_configsAdder.AddConfigs(data => (int) data.Id, dataConfigs.Configs);
-			
-			_services.AssetResolverService.UnloadAsset(uiConfigs);
-			_services.AssetResolverService.UnloadAsset(gameConfigs);
-			_services.AssetResolverService.UnloadAsset(dataConfigs);
+			var tasks = new UniTask[]
+			{ 
+				// Custome Configs
+				_services.AssetResolverService.LoadAssetAsync<UiConfigs>(
+					AddressableId.Addressables_Configs_UiConfigs.GetConfig().Address,
+					result => _uiService.Init(result)),
+
+				// Singleton Configs
+				_services.AssetResolverService.LoadAssetAsync<GameConfigs>(
+					AddressableId.Addressables_Configs_GameConfigs.GetConfig().Address,
+					result => _configsAdder.AddSingletonConfig(result.Config)),
+
+				// Collection Configs
+				_services.AssetResolverService.LoadAssetAsync<DataConfigs>(
+					AddressableId.Addressables_Configs_DataConfigs.GetConfig().Address,
+					result => _configsAdder.AddConfigs(data => (int)data.Id, result.Configs)),
+
+				// Assets Configs
+				_services.AssetResolverService.LoadAssetAsync<SceneAssetConfigs>(
+					AddressableId.Addressables_Configs_SceneAssetConfigs.GetConfig().Address,
+					result => _assetAdderService.AddConfigs(result))
+			};
+
+			await UniTask.WhenAll(tasks);
+
+			// TODO: Find a solution to unload all the configs as data was already added
 		}
 
 		private void LoadGameData()

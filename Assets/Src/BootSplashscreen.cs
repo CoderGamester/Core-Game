@@ -1,11 +1,9 @@
+using Game.Utils;
 using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
-using Random = UnityEngine.Random;
 
 namespace Game
 {
@@ -18,20 +16,20 @@ namespace Game
 
 		private IEnumerator Start()
 		{
-			var asyncOperation = SceneManager.LoadSceneAsync("Main", LoadSceneMode.Additive);
+			var asyncOperation = SceneManager.LoadSceneAsync(Constants.Scenes.MAIN, LoadSceneMode.Additive);
 
 			if (_audioSource.clip != null)
 			{
 				_audioSource.Play();
 			}
-			
+
 #if UNITY_PRO_LICENSE
-			SplashScreen.Begin();
-			SplashScreen.Draw();
+			UnityEngine.Rendering.SplashScreen.Begin();
+			UnityEngine.Rendering.SplashScreen.Draw();
 			
-			while (!SplashScreen.isFinished)
+			while (!UnityEngine.Rendering.SplashScreen.isFinished)
 			{
-				SplashScreen.Draw();
+				UnityEngine.Rendering.SplashScreen.Draw();
 				
 				yield return null;
 			}
@@ -42,7 +40,7 @@ namespace Game
 				yield return null;
 			}
 
-			SceneManager.MergeScenes(SceneManager.GetSceneByName("Boot"), SceneManager.GetSceneByName("Main"));
+			SceneManager.MergeScenes(SceneManager.GetSceneByName(Constants.Scenes.BOOT), SceneManager.GetSceneByName(Constants.Scenes.MAIN));
 			FindObjectsOfType<AudioListener>().All(audioSource => audioSource.enabled = true);
 			Destroy(gameObject);
 		}

@@ -13,7 +13,7 @@ namespace Game.Views
 	{
 		[SerializeField] private TextMeshProUGUI _timeText;
 		
-		private IGameServices _services;
+		private IGameServicesLocator _services;
 
 		/// <summary>
 		/// Initializes the view to start it's update loop.
@@ -21,7 +21,7 @@ namespace Game.Views
 		/// <exception cref="InvalidOperationException">
 		/// Thrown if is called more than one time for the same entity GameObject
 		/// </exception>
-		public void Init(IGameServices services)
+		public void Init(IGameServicesLocator services)
 		{
 			if (_services != null)
 			{

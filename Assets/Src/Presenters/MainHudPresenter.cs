@@ -25,13 +25,13 @@ namespace Game.Presenters
 		[SerializeField] private TextMeshProUGUI _hardCurrencyText;
 		[SerializeField] private Button _gameOverButton;
 
-		private IGameDataProvider _dataProvider;
-		private IGameServices _services;
+		private IGameDataProviderLocator _dataProvider;
+		private IGameServicesLocator _services;
 
 		private void Awake()
 		{
-			_dataProvider = MainInstaller.Resolve<IGameDataProvider>();
-			_services = MainInstaller.Resolve<IGameServices>();
+			_dataProvider = MainInstaller.Resolve<IGameDataProviderLocator>();
+			_services = MainInstaller.Resolve<IGameServicesLocator>();
 
 			_timer.Init(_services);
 			_gameOverButton.onClick.AddListener(GameOverClicked);

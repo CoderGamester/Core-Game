@@ -3,7 +3,7 @@ using System.ComponentModel;
 using GameLovers.Services;
 using Game.Ids;
 using Game.Logic;
-using Game.Logic.Shared;
+using Game.Logic.Server;
 using Game.Services;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ public partial class SROptions
 	[Category("Currency")]
 	public void Add100Sc()
 	{
-		var currencyLogic = MainInstaller.Resolve<IGameDataProvider>().CurrencyDataProvider as CurrencyLogic;
+		var currencyLogic = MainInstaller.Resolve<IGameDataProviderLocator>().CurrencyDataProvider as CurrencyLogic;
 		
 		currencyLogic.AddCurrency(GameId.SoftCurrency, 100);
 	}
@@ -26,7 +26,7 @@ public partial class SROptions
 	[Category("Currency")]
 	public void Add1000Sc()
 	{
-		var currencyLogic = MainInstaller.Resolve<IGameDataProvider>().CurrencyDataProvider as CurrencyLogic;
+		var currencyLogic = MainInstaller.Resolve<IGameDataProviderLocator>().CurrencyDataProvider as CurrencyLogic;
 		
 		currencyLogic.AddCurrency(GameId.SoftCurrency, 1000);
 	}
@@ -34,7 +34,7 @@ public partial class SROptions
 	[Category("Currency")]
 	public void Add100Hc()
 	{
-		var currencyLogic = MainInstaller.Resolve<IGameDataProvider>().CurrencyDataProvider as CurrencyLogic;
+		var currencyLogic = MainInstaller.Resolve<IGameDataProviderLocator>().CurrencyDataProvider as CurrencyLogic;
 		
 		currencyLogic.AddCurrency(GameId.HardCurrency, 100);
 	}
@@ -42,7 +42,7 @@ public partial class SROptions
 	[Category("Time")]
 	public void Add1Day()
 	{
-		var timeManipulator = MainInstaller.Resolve<IGameServices>().TimeService as ITimeManipulator;
+		var timeManipulator = MainInstaller.Resolve<IGameServicesLocator>().TimeService as ITimeManipulator;
 		var timeNow = timeManipulator.DateTimeUtcNow;
 			
 		timeManipulator.AddTime((float) (timeNow.AddDays(1) - timeNow).TotalSeconds);
@@ -51,7 +51,7 @@ public partial class SROptions
 	[Category("Time")]
 	public void Add1Hour()
 	{
-		var timeManipulator = MainInstaller.Resolve<IGameServices>().TimeService as ITimeManipulator;
+		var timeManipulator = MainInstaller.Resolve<IGameServicesLocator>().TimeService as ITimeManipulator;
 		var timeNow = timeManipulator.DateTimeUtcNow;
 			
 		timeManipulator.AddTime((float) (timeNow.AddHours(1) - timeNow).TotalSeconds);
@@ -60,7 +60,7 @@ public partial class SROptions
 	[Category("Time")]
 	public void Add1Minute()
 	{
-		var timeManipulator = MainInstaller.Resolve<IGameServices>().TimeService as ITimeManipulator;
+		var timeManipulator = MainInstaller.Resolve<IGameServicesLocator>().TimeService as ITimeManipulator;
 		var timeNow = timeManipulator.DateTimeUtcNow;
 			
 		timeManipulator.AddTime((float) (timeNow.AddHours(1) - timeNow).TotalSeconds);
