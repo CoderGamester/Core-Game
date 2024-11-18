@@ -6,7 +6,12 @@ This project is a the core foundation of a new game project.
 - Open the UiConfigs scriptable object. Search in the project or Tools > Select UiConfigs.asset
 - Open the "Boot" Scene to play the game demo
 
-## Project Keybind Shortcuts
+## Unity Project Keybind Shortcuts
 
 - ALT+R to force compile all project code
 - ALT+1 to open the "Boot" scene
+- ALT+2 to open the "Main" scene
+
+### Demo URL
+
+https://codergamester.github.io/Core-Game/WebGL_Build/

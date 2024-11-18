@@ -71,7 +71,7 @@ namespace Game.StateMachines
 
 		private void OpenMainScreenUi()
 		{
-			_ = _uiService.OpenUiAsync<MainMenuPresenter>();
+			_uiService.OpenUiAsync<MainMenuPresenter>().Forget();
 		}
 
 		private void CloseMainScreenUi()
@@ -89,12 +89,13 @@ namespace Game.StateMachines
 			await UniTask.WhenAll(
 				_uiService.LoadGameUiSet(UiSetId.MenuUi, 0.8f),
 				_services.AssetResolverService.LoadSceneAsync(SceneId.Menu, LoadSceneMode.Additive));
-			await Resources.UnloadUnusedAssets().ToUniTask();
 		}
 
 		private void UnloadAssets()
 		{
+			_uiService.UnloadGameUiSet(UiSetId.MenuUi);
 			_services.AssetResolverService.UnloadSceneAsync(SceneId.Menu).Forget();
+			Resources.UnloadUnusedAssets();
 		}
 	}
 }

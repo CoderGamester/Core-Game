@@ -18,6 +18,11 @@ namespace Game.Services
 		/// value defined by the given <paramref name="loadingCap"/>
 		/// </summary>
 		UniTask LoadGameUiSet(UiSetId uiSetId, float loadingCap);
+
+		/// <summary>
+		/// Unloads all the <see cref="UiPresenter"/> defined by the given <paramref name="uiSetId"/>
+		/// </summary>
+		void UnloadGameUiSet(UiSetId uiSetId);
 	}
 
 	/// <inheritdoc cref="IGameUiService"/>
@@ -50,6 +55,12 @@ namespace Game.Services
 			}
 
 			loadingScreen.SetLoadingPercentage(loadingCap);
+		}
+
+		/// <inheritdoc />
+		public void UnloadGameUiSet(UiSetId uiSetId)
+		{
+			UnloadUiSet((int) uiSetId);
 		}
 	}
 }

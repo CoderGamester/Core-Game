@@ -138,12 +138,13 @@ namespace Game.StateMachines
 			await UniTask.WhenAll(
 				_uiService.LoadGameUiSet(UiSetId.GameplayUi, 0.8f),
 				_services.AssetResolverService.LoadSceneAsync(SceneId.Game, LoadSceneMode.Additive));
-			await Resources.UnloadUnusedAssets().ToUniTask();
 		}
 
 		private void UnloadAssets()
 		{
+			_uiService.UnloadGameUiSet(UiSetId.GameplayUi);
 			_services.AssetResolverService.UnloadSceneAsync(SceneId.Game).Forget();
+			Resources.UnloadUnusedAssets();
 		}
 	}
 }
