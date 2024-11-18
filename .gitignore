@@ -138,6 +138,7 @@ quantum_server/packages
 !**/Assets/Libs/iOS Project Builder/*
 
 #Project Specific
+!WebGL_Build/*
 **/UserSettings/Layouts
 EditorUserSettings.*
 *.gz
