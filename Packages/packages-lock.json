@@ -24,7 +24,7 @@
         "com.gamelovers.configsprovider": "0.1.1",
         "com.cysharp.unitask": "2.5.10"
       },
-      "hash": "9bfd59efb1d2ecc2f3925270f523b996ae9e5888"
+      "hash": "2c212648e4addf3a353d332ef40a128a09d41623"
     },
     "com.gamelovers.configsprovider": {
       "version": "https://github.com/CoderGamester/Unity-ConfigsProvider.git",
@@ -38,7 +38,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "adfa87b6b0b52577f3133eb76d6746be74e34362"
+      "hash": "740ad1ac6da65170f0e55e9305e1f26172783de6"
     },
     "com.gamelovers.googlesheetimporter": {
       "version": "https://github.com/CoderGamester/Unity-GoogleSheet-Importer.git",
@@ -58,7 +58,7 @@
       "dependencies": {
         "com.gamelovers.dataextensions": "0.6.2"
       },
-      "hash": "ee0c43ea82daed8e12e242a399d02c0de439cae4"
+      "hash": "9cf72f85d107f7f292881bb47f05ddaa698f339f"
     },
     "com.gamelovers.statechart": {
       "version": "https://github.com/CoderGamester/com.gamelovers.statechart.git",
@@ -75,9 +75,10 @@
       "source": "git",
       "dependencies": {
         "com.unity.addressables": "1.22.0",
-        "com.cysharp.unitask": "2.5.10"
+        "com.cysharp.unitask": "2.5.10",
+        "com.unity.textmeshpro": "3.0.9"
       },
-      "hash": "cc8cccd73382f1cf4935a5cc95399a0eb8a39de8"
+      "hash": "97e607dee6f704870105a7ed165edf566520baff"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",

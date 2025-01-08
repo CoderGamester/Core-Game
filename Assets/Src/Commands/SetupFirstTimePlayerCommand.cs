@@ -11,7 +11,7 @@ namespace Game.Commands
 		/// <inheritdoc />
 		public void Execute(IGameLogicLocator gameLogic, IMessageBrokerService messageBroker)
 		{
-			// Restart the Game data
+			// Setup Game data in logic
 		}
 	}
 }

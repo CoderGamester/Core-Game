@@ -1,21 +1,13 @@
 ﻿using Cysharp.Threading.Tasks;
 using Game.Ids;
 using Game.Logic;
-using Game.Messages;
 using Game.Presenters;
 using Game.Services;
-using Game.Utils;
 using GameLovers.Services;
 using GameLovers.StatechartMachine;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.SceneManagement;
-using static Game.Utils.Constants;
 
 namespace Game.StateMachines
 {
@@ -24,7 +16,7 @@ namespace Game.StateMachines
 	/// </summary>
 	public class MainMenuState
 	{
-		private static readonly IStatechartEvent PLAY_CLICKED_EVENT = new StatechartEvent("Play Button Clicked Event");
+		private static readonly IStatechartEvent _play_Clicked_Event = new StatechartEvent("Play Button Clicked Event");
 
 		private readonly IGameUiService _uiService;
 		private readonly IGameServicesLocator _services;
@@ -52,7 +44,7 @@ namespace Game.StateMachines
 			menuLoading.WaitingFor(LoadMenuAssets).Target(mainScreen);
 
 			mainScreen.OnEnter(OpenMainScreenUi);
-			mainScreen.Event(PLAY_CLICKED_EVENT).Target(final);
+			mainScreen.Event(_play_Clicked_Event).Target(final);
 			mainScreen.OnExit(CloseMainScreenUi);
 
 			final.OnEnter(UnloadAssets);
@@ -61,7 +53,7 @@ namespace Game.StateMachines
 
 		private void SubscribeEvents()
 		{
-			_services.MessageBrokerService.Subscribe<OnPlayClickedMessage>(OnPlayClickedMessage);
+			// Subscribe to any events
 		}
 
 		private void UnsubscribeEvents()
@@ -71,17 +63,17 @@ namespace Game.StateMachines
 
 		private void OpenMainScreenUi()
 		{
-			_uiService.OpenUiAsync<MainMenuPresenter>().Forget();
+			var data = new MainMenuPresenter.PresenterData
+			{
+				OnPlayButtonClicked = () => _statechartTrigger(_play_Clicked_Event)
+			};
+			
+			_uiService.OpenUiAsync<MainMenuPresenter, MainMenuPresenter.PresenterData>(data).Forget();
 		}
 
 		private void CloseMainScreenUi()
 		{
 			_uiService.CloseUi<MainMenuPresenter>();
-		}
-
-		private void OnPlayClickedMessage(OnPlayClickedMessage messagage)
-		{
-			_statechartTrigger(PLAY_CLICKED_EVENT);
 		}
 
 		private async UniTask LoadMenuAssets()

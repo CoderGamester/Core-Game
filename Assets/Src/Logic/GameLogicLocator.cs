@@ -57,7 +57,7 @@ namespace Game.Logic
 	/// <summary>
 	/// This interface provides the contract to initialize the Game Logic
 	/// </summary>
-	public interface IGameLogicLocatorInit
+	public interface IGameLogicLocatorInit : IGameLogicLocator
 	{
 		/// <summary>
 		/// Initializes the Game Logic state to it's default initial values
@@ -66,7 +66,7 @@ namespace Game.Logic
 	}
 
 	/// <inheritdoc cref="IGameLogicLocator"/>
-	public class GameLogicLocator : IGameLogicLocator, IGameLogicLocatorInit
+	public class GameLogicLocator : IGameLogicLocatorInit
 	{
 		/// <inheritdoc />
 		public IAppDataProvider AppDataProvider => AppLogic;

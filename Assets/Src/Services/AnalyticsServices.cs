@@ -1,4 +1,5 @@
 ﻿using Game.Services.Analytics;
+using UnityEngine.Device;
 
 namespace Game.Services
 {
@@ -37,11 +38,10 @@ namespace Game.Services
 		AnalyticsUI UiCalls { get; }
 		/// <inheritdoc cref="AnalyticsMainMenu"/>
 		AnalyticsMainMenu MainMenuCalls { get; }
-		/// <inheritdoc cref="AnalyticsMatch"/>
 	}
 
-	/// <inheritdoc />
-	public class AnalyticsService : IAnalyticsService
+	/// <inheritdoc cref="IAnalyticsService" />
+	public class AnalyticsService : IAnalyticsService, IGameServicesInitializer
 	{
 		/// <inheritdoc />
 		public AnalyticsSession SessionCalls { get; }
@@ -61,6 +61,15 @@ namespace Game.Services
 			ErrorsCalls = new AnalyticsErrors(this);
 			UiCalls = new AnalyticsUI(this);
 			MainMenuCalls = new AnalyticsMainMenu(this);
+		}
+
+		/// <inheritdoc />
+		public void Init()
+		{
+			// TODO: request data collection permission (use ask age screen for example)
+			Unity.Services.Analytics.AnalyticsService.Instance.StartDataCollection();
+			SessionCalls.SessionStart();
+			SessionCalls.PlayerLogin(SystemInfo.deviceUniqueIdentifier);
 		}
 	}
 }

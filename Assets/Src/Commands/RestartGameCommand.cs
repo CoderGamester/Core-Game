@@ -1,4 +1,5 @@
 ﻿using Game.Logic;
+using Game.Messages;
 using GameLovers.Services;
 
 namespace Game.Commands
@@ -13,6 +14,7 @@ namespace Game.Commands
 		public void Execute(IGameLogicLocator gameLogic, IMessageBrokerService messageBroker)
 		{
 			// Restart the Game data
+			messageBroker.Publish(new OnGameRestartMessage());
 		}
 	}
 }

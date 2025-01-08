@@ -1,15 +1,15 @@
-using GameLovers;
 using GameLovers.Services;
 using GameLovers.UiService;
+using GameLovers;
 using Game.Ids;
 using Game.Logic;
+using Game.Messages;
 using Game.Services;
 using TMPro;
 using UnityEngine;
 using Game.Views;
 using UnityEngine.UI;
-using System;
-using Game.Messages;
+using UnityEngine.Events;
 
 namespace Game.Presenters
 {
@@ -17,13 +17,18 @@ namespace Game.Presenters
 	/// This Presenter handles the Main HUD UI by:
 	/// - Showing the HUD visual status
 	/// </summary>
-	public class MainHudPresenter : UiPresenter
+	public class MainHudPresenter : UiPresenter<MainHudPresenter.PresenterData>
 	{
+		public struct PresenterData
+		{
+			public UnityAction OnPauseClicked;
+		}
+		
 		[SerializeField] private TimerView _timer;
-		[SerializeField] private TextMeshProUGUI _version;
 		[SerializeField] private TextMeshProUGUI _softCurrencyText;
 		[SerializeField] private TextMeshProUGUI _hardCurrencyText;
-		[SerializeField] private Button _gameOverButton;
+		[SerializeField] private Button _pauseButton;
+		[SerializeField] private Button _gameOverCheatButton;
 
 		private IGameDataProviderLocator _dataProvider;
 		private IGameServicesLocator _services;
@@ -34,15 +39,13 @@ namespace Game.Presenters
 			_services = MainInstaller.Resolve<IGameServicesLocator>();
 
 			_timer.Init(_services);
-			_gameOverButton.onClick.AddListener(GameOverClicked);
+			_pauseButton.onClick.AddListener(() => Data.OnPauseClicked.Invoke());
+			_gameOverCheatButton.onClick.AddListener(OnGameOverCheatButtonClicked);
 		}
 
-		private void Start()
+		private void OnGameOverCheatButtonClicked()
 		{
-			_version.text = 
-				$"internal = v{VersionServices.VersionInternal}\n" +
-				$"external = v{VersionServices.VersionExternal}\n" +
-				$"build number = {VersionServices.BuildNumber}";
+			_services.MessageBrokerService.Publish(new OnGameOverMessage());
 		}
 
 		protected override void OnOpened()
@@ -59,11 +62,6 @@ namespace Game.Presenters
 		private void OnHardCurrencyUpdated(GameId currency, int amountBefore, int amountAfter, ObservableUpdateType updateType)
 		{
 			_hardCurrencyText.text = $"HC: {amountAfter.ToString()}";
-		}
-
-		private void GameOverClicked()
-		{
-			_services.MessageBrokerService.Publish(new OnGameOverMessage());
 		}
 	}
 }

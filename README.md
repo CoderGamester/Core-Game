@@ -1,5 +1,5 @@
 # Core-Game
-This project is a the core foundation of a new game project.
+This repository is a the core foundation of a new game project.
 
 - Open in Unity 2022.3.1f or later
 - Open Addressables Groups page and generate Addressables settings. Window > Asset Management > Addressables > Groups > Generate Settings

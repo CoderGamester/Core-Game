@@ -9,7 +9,7 @@ namespace Game.StateMachines
 	/// <summary>
 	/// The State Machine that controls the entire flow of the game
 	/// </summary>
-	public class GameStateMachine : IDisposable
+	public class GameStateMachine
 	{
 		private readonly IStatechart _stateMachine;
 		private readonly IGameServicesLocator _services;
@@ -30,7 +30,7 @@ namespace Game.StateMachines
 			_services = installer.Resolve<IGameServicesLocator>();
 			_uiService = installer.Resolve<IGameUiServiceInit>();
 
-			_initialLoadingState = new InitialLoadingState(installer);
+			_initialLoadingState = new InitialLoadingState(installer, Trigger);
 			_gameplayState = new GameplayState(installer, Trigger);
 			_mainMenuState = new MainMenuState(installer, Trigger);
 			_stateMachine = new Statechart(Setup);
@@ -40,11 +40,6 @@ namespace Game.StateMachines
 		public void Run()
 		{
 			_stateMachine.Run();
-		}
-
-		/// <inheritdoc />
-		public void Dispose()
-		{
 		}
 
 		private void Trigger(IStatechartEvent eventTrigger)

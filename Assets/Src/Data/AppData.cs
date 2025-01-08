@@ -30,6 +30,7 @@ namespace Game.Data
 		public QualityLevel GraphicQuality = QualityLevel.Medium;
 
 		public bool IsFirstSession => SessionCount <= 1;
+		public bool IsComplianceAccepted;
 
 		/// <summary>
 		/// Copies base values for when user logs in to a new environment.

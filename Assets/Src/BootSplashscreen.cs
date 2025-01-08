@@ -10,7 +10,7 @@ namespace Game
 	/// <summary>
 	/// The first entry object that shows the splash screen and boots the <see cref="Main"/> scene reference
 	/// </summary>
-	public class BootSplashscreen : MonoBehaviour
+	public class BootSplashScreen : MonoBehaviour
 	{
 		[SerializeField] private AudioSource _audioSource;
 

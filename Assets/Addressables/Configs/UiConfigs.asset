@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loadingSpinnerType: 
   _configs:
+  - AddressableAddress: Addressables/Prefabs/UI/Compliance Screen.prefab
+    Layer: 10
+    UiType: Game.Presenters.ComplianceScreenPresenter, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   - AddressableAddress: Addressables/Prefabs/UI/GameOver.prefab
     Layer: 0
     UiType: Game.Presenters.GameOverScreenPresenter, Assembly-CSharp, Version=0.0.0.0,
@@ -30,9 +34,15 @@ MonoBehaviour:
     Layer: 1
     UiType: Game.Presenters.MainHudPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+  - AddressableAddress: Addressables/Prefabs/UI/Pause PopUp.prefab
+    Layer: 0
+    UiType: Game.Presenters.PausePopUpPresenter, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   _sets:
   - SetId: 0
     UiConfigsType:
+    - Game.Presenters.LoadingScreenPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
     - Game.Presenters.LoadingScreenPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   - SetId: 1
@@ -44,4 +54,6 @@ MonoBehaviour:
     - Game.Presenters.GameOverScreenPresenter, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     - Game.Presenters.MainHudPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    - Game.Presenters.PausePopUpPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null

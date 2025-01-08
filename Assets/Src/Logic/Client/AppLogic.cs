@@ -16,6 +16,11 @@ namespace Game.Logic.Client
 		/// Requests the information if the current game session is the first time the player is playing the game or not
 		/// </summary>
 		bool IsFirstSession { get; }
+		
+		/// <summary>
+		/// Requests the information if the player already accepted the terms of service and compliance for this game
+		/// </summary>
+		bool IsComplianceAccepted { get; }
 
 		/// <summary>
 		/// Requests the information if the game was or not yet reviewed
@@ -76,6 +81,9 @@ namespace Game.Logic.Client
 	/// <inheritdoc cref="IAppLogic"/>
 	public interface IAppLogic : IAppDataProvider, IGameLogicInitializer
 	{
+		/// <inheritdoc cref="IAppDataProvider.IsComplianceAccepted" />
+		new bool IsComplianceAccepted { get; set; }
+		
 		/// <summary>
 		/// Marks the date when the game was last time reviewed
 		/// </summary>
@@ -92,6 +100,13 @@ namespace Game.Logic.Client
 	public class AppLogic : AbstractBaseLogic<AppData>, IAppLogic
 	{
 		private readonly DateTime _defaultZeroTime = new(2020, 1, 1);
+
+		/// <inheritdoc cref="IAppLogic.IsComplianceAccepted" />
+		public bool IsComplianceAccepted
+		{
+			get => Data.IsComplianceAccepted; 
+			set => Data.IsComplianceAccepted = value;
+		}
 
 		/// <inheritdoc />
 		public bool IsFirstSession => Data.IsFirstSession;

@@ -38,8 +38,44 @@ namespace Game.Services.Analytics
 			}
 		}
 
+		private static Dictionary<string, object> StartData => new Dictionary<string, object>
+		{
+			{ "client_version", VersionServices.VersionInternal },
+			{ "platform", Application.platform.ToString() },
+			{ "device", SystemInfo.deviceModel },
+			{ "tablet", IsTablet },
+#if UNITY_IOS
+				{"ios_generation", UnityEngine.iOS.Device.generation.ToString()},
+				{"ios_att_enabled", UnityEngine.iOS.Device.advertisingTrackingEnabled},
+#else
+			{ "cpu", SystemInfo.processorType },
+			{ "gpu_api", SystemInfo.graphicsDeviceType.ToString() },
+#endif
+			{ "language", Application.systemLanguage.ToString() },
+			{ "os", SystemInfo.operatingSystem },
+			//{"memory_readable", SRFileUtil.GetBytesReadable((long) SystemInfo.systemMemorySize*1024*1024)},
+		};
+
 		public AnalyticsSession(IAnalyticsService analyticsService) : base(analyticsService)
 		{
+		}
+
+		/// <summary>
+		/// Sends the mark of starting a game session
+		/// </summary>
+		public void SessionStart()
+		{
+			var loginData = StartData;
+			// ReSharper disable once RedundantAssignment
+			var source = Application.platform.ToString();
+			
+#if !UNITY_EDITOR && UNITY_WEBGL
+			source = new Uri(Application.absoluteURL).Host;
+#endif
+			
+			loginData.Add("session_source", source);
+			
+			LogEvent(AnalyticsEvents.SessionStart, StartData);
 		}
 
 		/// <summary>
@@ -144,24 +180,9 @@ namespace Game.Services.Analytics
 		{
 			UnityEngine.CrashReportHandler.CrashReportHandler.SetUserMetadata("player_id", id);
 
-			var loginData = new Dictionary<string, object>
-			{
-				{"user_id", id },
-				{"client_version", VersionServices.VersionInternal },
-				{"platform", Application.platform.ToString()},
-				{"device", SystemInfo.deviceModel},
-				{"tablet", IsTablet},
-#if UNITY_IOS
-				{"ios_generation", UnityEngine.iOS.Device.generation.ToString()},
-				{"ios_att_enabled", UnityEngine.iOS.Device.advertisingTrackingEnabled},
-#else
-				{"cpu", SystemInfo.processorType},
-				{"gpu_api", SystemInfo.graphicsDeviceType.ToString()},
-#endif
-				{"language", Application.systemLanguage.ToString()},
-				{"os", SystemInfo.operatingSystem},
-				//{"memory_readable", SRFileUtil.GetBytesReadable((long) SystemInfo.systemMemorySize*1024*1024)},
-			};
+			var loginData = StartData;
+			
+			loginData.Add("user_id", id);
 			
 			LogEvent(AnalyticsEvents.PlayerLogin, loginData);
 		}
