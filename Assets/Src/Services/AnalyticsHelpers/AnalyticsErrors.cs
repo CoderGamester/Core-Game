@@ -12,8 +12,7 @@ namespace Game.Services.Analytics
 		public enum ErrorType
 		{
 			Session,
-			Disconnect,
-			Match,
+			Disconnect
 		}
 
 		public AnalyticsErrors(IAnalyticsService analyticsService) : base(analyticsService)

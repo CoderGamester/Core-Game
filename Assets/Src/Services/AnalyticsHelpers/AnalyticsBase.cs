@@ -32,26 +32,29 @@ namespace Game.Services.Analytics
 				}
 				*/
 
-				if (parameters == null || parameters.Count == 0)
-				{
-					// Unity
-					UnityEngine.Analytics.Analytics.CustomEvent(eventName);
-					return;
-				}
-
-				if (parameters.Count > 10)
-				{
-					Debug.LogError($"The event {eventName} has {parameters.Count} and the max parameters for unity is 10");
-				}
-
-				// Unity
-				UnityEngine.Analytics.Analytics.CustomEvent(eventName, parameters);
+				UnityAnalyticsTrack(eventName, parameters);
 			}
 			catch (Exception e)
 			{
 				Debug.LogError("Error while sending analytics: " + e.Message);
 				Debug.LogException(e);
 			}
+		}
+
+		private void UnityAnalyticsTrack(string eventName, Dictionary<string, object> parameters)
+		{
+			if (parameters == null || parameters.Count == 0)
+			{
+				UnityEngine.Analytics.Analytics.CustomEvent(eventName);
+				return;
+			}
+			
+			if (parameters.Count > 10)
+			{
+				Debug.LogError($"The event {eventName} has {parameters.Count} and the max parameters for unity is 10");
+			}
+			
+			UnityEngine.Analytics.Analytics.CustomEvent(eventName, parameters);
 		}
 	}
 }

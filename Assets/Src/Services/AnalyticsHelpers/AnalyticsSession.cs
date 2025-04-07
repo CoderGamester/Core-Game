@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Game.Data;
 using GameLovers;
+using GameLovers.Services;
 using UnityEngine;
 using UnityEngine.Analytics;
 
@@ -12,10 +14,8 @@ namespace Game.Services.Analytics
 	public class AnalyticsSession : AnalyticsBase
 	{
 		private float _loadingStarted;
+		private IDataProvider _dataProvider;
 
-		/// <summary>
-		/// Requests the information if the current device model playing the game is a tablet or 
-		/// </summary>
 		private static bool IsTablet
 		{
 			get
@@ -30,7 +30,7 @@ namespace Game.Services.Analytics
 				var diagonalInchesSqrt =Mathf.Pow (screenWidthDpi, 2) + Mathf.Pow (screenHeightDpi, 2);
 				var aspectRatio = Mathf.Max(screenWidth, screenHeight) / Mathf.Min(screenWidth, screenHeight);
 
-				// This are physical size device checks with aspect ratio double confirmation
+				// This double checks the physical size device with screen aspect ratio
 				return diagonalInchesSqrt > 42f && aspectRatio < 2f;
 #else
 				return false;
@@ -44,20 +44,18 @@ namespace Game.Services.Analytics
 			{ "platform", Application.platform.ToString() },
 			{ "device", SystemInfo.deviceModel },
 			{ "tablet", IsTablet },
-#if UNITY_IOS
-				{"ios_generation", UnityEngine.iOS.Device.generation.ToString()},
-				{"ios_att_enabled", UnityEngine.iOS.Device.advertisingTrackingEnabled},
-#else
-			{ "cpu", SystemInfo.processorType },
-			{ "gpu_api", SystemInfo.graphicsDeviceType.ToString() },
-#endif
-			{ "language", Application.systemLanguage.ToString() },
 			{ "os", SystemInfo.operatingSystem },
-			//{"memory_readable", SRFileUtil.GetBytesReadable((long) SystemInfo.systemMemorySize*1024*1024)},
+			{ "language", Application.systemLanguage.ToString() },
+#if UNITY_WEBGL && !UNITY_EDITOR
+			{ "url_source", new Uri(Application.absoluteURL).Host },
+#elif UNITY_IOS
+			{ "ios_att_enabled", UnityEngine.iOS.Device.advertisingTrackingEnabled},
+#endif
 		};
 
-		public AnalyticsSession(IAnalyticsService analyticsService) : base(analyticsService)
+		public AnalyticsSession(IAnalyticsService analyticsService, IDataProvider dataProvider) : base(analyticsService)
 		{
+			_dataProvider = dataProvider;
 		}
 
 		/// <summary>
@@ -65,17 +63,13 @@ namespace Game.Services.Analytics
 		/// </summary>
 		public void SessionStart()
 		{
+			var appData = _dataProvider.GetData<AppData>();
 			var loginData = StartData;
-			// ReSharper disable once RedundantAssignment
-			var source = Application.platform.ToString();
 			
-#if !UNITY_EDITOR && UNITY_WEBGL
-			source = new Uri(Application.absoluteURL).Host;
-#endif
+			loginData.Add("session_count", appData.SessionCount);
+			loginData.Add("days_since_install", (DateTime.UtcNow - appData.FirstLoginTime).Days);
 			
-			loginData.Add("session_source", source);
-			
-			LogEvent(AnalyticsEvents.SessionStart, StartData);
+			LogEvent(AnalyticsEvents.SessionStart, loginData);
 		}
 
 		/// <summary>
@@ -115,7 +109,7 @@ namespace Game.Services.Analytics
 					{"vendor_id", SystemInfo.deviceUniqueIdentifier},
 					{"session_id", AnalyticsSessionInfo.sessionId }
 				};
-				LogEvent(AnalyticsEvents.AdsData, dic);
+				LogEvent(AnalyticsEvents.SessionAdsData, dic);
 			});
 			
 			// If the async call fails we try another way
@@ -132,7 +126,7 @@ namespace Game.Services.Analytics
 					{"vendor_id", SystemInfo.deviceUniqueIdentifier},
 					{"session_id", AnalyticsSessionInfo.sessionId }
 				};
-				LogEvent(AnalyticsEvents.AdsData, dic);
+				LogEvent(AnalyticsEvents.SessionAdsData, dic);
 			}
 
 			_loadingStarted = Time.realtimeSinceStartup;
@@ -155,12 +149,11 @@ namespace Game.Services.Analytics
 		}
 
 		/// <summary>
-		/// Logs the end of the given <paramref name="loadingAction"/>
+		/// Logs the end of the given <paramref name="scene"/>
 		/// </summary>
 		public void LoadingCompleted(string scene)
 		{
 			var loadingTime = Time.realtimeSinceStartup - _loadingStarted;
-
 			var data = new Dictionary<string, object>
 			{
 				{"boot_time", Time.realtimeSinceStartup},
@@ -182,9 +175,22 @@ namespace Game.Services.Analytics
 
 			var loginData = StartData;
 			
-			loginData.Add("user_id", id);
+			loginData.Add("player_id", id);
 			
 			LogEvent(AnalyticsEvents.PlayerLogin, loginData);
+		}
+
+		/// <summary>
+		/// Logs the player age in aggregated analytics for player segmentation
+		/// </summary>
+		public void PlayerAge(int age)
+		{
+			var data = new Dictionary<string, object>
+			{
+				{"age", age },
+			};
+			
+			LogEvent(AnalyticsEvents.PlayerAge, data);
 		}
 
 #if UNITY_ANDROID

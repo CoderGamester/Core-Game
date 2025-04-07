@@ -38,6 +38,10 @@ MonoBehaviour:
     Layer: 0
     UiType: Game.Presenters.PausePopUpPresenter, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  - AddressableAddress: Addressables/Prefabs/UI/Win Screen.prefab
+    Layer: 0
+    UiType: Game.Presenters.WinScreenPresenter, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
   _sets:
   - SetId: 0
     UiConfigsType:
@@ -56,4 +60,6 @@ MonoBehaviour:
     - Game.Presenters.MainHudPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
     - Game.Presenters.PausePopUpPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    - Game.Presenters.WinScreenPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null

@@ -1,19 +1,19 @@
-﻿using Cysharp.Threading.Tasks;
-using GameLovers;
-using GameLovers.ConfigsProvider;
+﻿using System.Threading.Tasks;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.UI;
+using Unity.Services.Core;
+using Cysharp.Threading.Tasks;
 using GameLovers.Services;
+using GameLovers;
 using GameLovers.UiService;
+using GameLovers.ConfigsProvider;
+using GameLovers.AssetsImporter;
 using Game.Logic;
 using Game.Services;
 using Game.StateMachines;
-using System.Threading.Tasks;
-using UnityEngine;
-using Unity.Services.Core;
-using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.InputSystem.UI;
-using System.Collections;
 using Game.Messages;
-using GameLovers.AssetsImporter;
 
 // ReSharper disable once CheckNamespace
 
@@ -45,11 +45,11 @@ namespace Game
 			installer.Bind<GameUiService, IGameUiServiceInit, IGameUiService>(new GameUiService(new UiAssetLoader()));
 			installer.Bind<IPoolService>(new PoolService());
 			installer.Bind<ITickService>(new TickService());
-			installer.Bind<IAnalyticsService>(new AnalyticsService());
 			installer.Bind<ICoroutineService>(new CoroutineService());
 			installer.Bind<AssetResolverService, IAssetResolverService, IAssetAdderService>(new AssetResolverService());
 			installer.Bind<ConfigsProvider, IConfigsAdder, IConfigsProvider>(new ConfigsProvider());
 			installer.Bind<DataService, IDataService, IDataProvider>(new DataService());
+			installer.Bind<IAnalyticsService>(new AnalyticsService(installer.Resolve<IMessageBrokerService>(), installer.Resolve<IDataProvider>()));
 
 			var gameLogic = new GameLogicLocator(installer);
 
@@ -116,6 +116,9 @@ namespace Game
 
 			if (isPaused)
 			{
+				_dataService.SaveAllData();
+				_services.AnalyticsService.FlushEvents();
+				
 				_pauseCoroutine = StartCoroutine(EndAppCoroutine());
 			}
 			else if (_pauseCoroutine != null)
@@ -126,6 +129,14 @@ namespace Game
 			}
 
 			_services.MessageBrokerService.Publish(new ApplicationPausedMessage { IsPaused = isPaused });
+
+#if UNITY_WEBGL
+			// OnApplicationQuit is not invoked on WebGL builds. The alternative is -> https://stackoverflow.com/questions/74295132/unity-webgl-onapplicationquit 
+			if (isPaused)
+			{
+				OnApplicationQuit();
+			}
+#endif
 		}
 
 		private void OnApplicationQuit()
@@ -135,6 +146,7 @@ namespace Game
 			_onApplicationAlreadyQuitFlag = true;
 
 			_dataService.SaveAllData();
+			_services.AnalyticsService.FlushEvents();
 			_services.MessageBrokerService.Publish(new ApplicationQuitMessage());
 			_services.AnalyticsService.SessionCalls.SessionEnd(_gameLogic.AppLogic.QuitReason);
 		}

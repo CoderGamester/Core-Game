@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Game.Services.Analytics
+﻿namespace Game.Services.Analytics
 {
 	/// <summary>
 	/// This class provides the necessary behaviour to manage the analytics endpoints for the game's main menu
@@ -16,23 +14,7 @@ namespace Game.Services.Analytics
 		/// </summary>
 		public void MainMenuEnter()
 		{
-			var data = new Dictionary<string, object>
-			{
-			};
-
-			LogEvent(AnalyticsEvents.MainMenuEnter, data);
-		}
-
-		/// <summary>
-		/// Logs the event when the player leaves the main menu
-		/// </summary>
-		public void MainMenuExit()
-		{
-			var data = new Dictionary<string, object>
-			{
-			};
-
-			LogEvent(AnalyticsEvents.MainMenuExit, data);
+			LogEvent(AnalyticsEvents.MainMenuEnter);
 		}
 	}
 }

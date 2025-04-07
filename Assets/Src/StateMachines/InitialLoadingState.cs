@@ -76,14 +76,14 @@ namespace Game.StateMachines
 			final.OnEnter(UnsubscribeEvents);
 		}
 
+		private void SubscribeEvents()
+		{
+			_services.MessageBrokerService.Subscribe<ApplicationComplianceAcceptedMessage>(OnApplicationComplianceAcceptedMessage);
+		}
+
 		private void UnsubscribeEvents()
 		{
 			_services.MessageBrokerService.UnsubscribeAll(this);
-		}
-
-		private void SubscribeEvents()
-		{
-			// Add any events to subscribe
 		}
 
 		private void InitPlugins()
@@ -96,7 +96,7 @@ namespace Game.StateMachines
 
 		private async UniTask LoadInitialUi()
 		{
-			await UniTask.WhenAll(_uiService.LoadUiSetAsync((int) UiSetId.InitialLoadUi));
+			await UniTask.WhenAll(_uiService.LoadUiSetAsync((int)UiSetId.InitialLoadUi));
 		}
 
 		private void InitGameLogic()
