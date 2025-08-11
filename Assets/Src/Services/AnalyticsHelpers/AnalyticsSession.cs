@@ -63,13 +63,13 @@ namespace Game.Services.Analytics
 		/// </summary>
 		public void SessionStart()
 		{
-			var appData = _dataProvider.GetData<AppData>();
+			var appData = _dataProvider.HasData<AppData>() ? _dataProvider.GetData<AppData>() : new AppData();
 			var loginData = StartData;
+			
+			appData.FirstLoginTime = appData.SessionCount == 0 ? DateTime.UtcNow : appData.FirstLoginTime;
 			
 			loginData.Add("session_count", appData.SessionCount);
 			loginData.Add("days_since_install", (DateTime.UtcNow - appData.FirstLoginTime).Days);
-			
-			LogEvent(AnalyticsEvents.SessionStart, loginData);
 		}
 
 		/// <summary>

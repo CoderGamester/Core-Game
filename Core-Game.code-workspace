@@ -1,0 +1,14 @@
+{
+  "folders": [
+    {
+      "path": "Assets"
+    },
+    {
+      "path": "Packages"
+    },
+    {
+      "path": "Library/PackageCache"
+    }
+  ],
+  "settings": {}
+}

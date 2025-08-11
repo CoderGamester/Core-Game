@@ -83,6 +83,9 @@ namespace Game.Logic.Client
 	{
 		/// <inheritdoc cref="IAppDataProvider.IsComplianceAccepted" />
 		new bool IsComplianceAccepted { get; set; }
+
+		/// <inheritdoc cref="IAppDataProvider.DisplayName" />
+		new IObservableField<string> DisplayName { get; }
 		
 		/// <summary>
 		/// Marks the date when the game was last time reviewed
@@ -165,7 +168,10 @@ namespace Game.Logic.Client
 		public IObservableField<string> DisplayNameFull { get; private set; }
 
 		/// <inheritdoc />
-		public IObservableFieldReader<string> DisplayName { get; private set; }
+		IObservableFieldReader<string> IAppDataProvider.DisplayName => DisplayName;
+		
+		/// <inheritdoc />
+		public IObservableField<string> DisplayName { get; private set; }
 
 		/// <inheritdoc />
 		public string QuitReason { get; private set; }
@@ -213,6 +219,11 @@ namespace Game.Logic.Client
 #endif
 		}
 
+		/// <summary>
+		/// Trims the Player's Display Name without the last 5 characters.
+		/// This is necessary because some backend systems (e.g. PlayFab) create 5 unique characters at the end of the player name to avoid duplications
+		/// </summary>
+		/// <returns>Returns the trimmed string of the Player's Display Name</returns>
 		private string TrimName()
 		{
 			var isEmpty = string.IsNullOrWhiteSpace(Data.DisplayName) || Data.DisplayName.Length < 5;
