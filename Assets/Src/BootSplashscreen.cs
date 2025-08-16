@@ -41,8 +41,8 @@ namespace Game
 			}
 
 			SceneManager.MergeScenes(SceneManager.GetSceneByName(Constants.Scenes.BOOT), SceneManager.GetSceneByName(Constants.Scenes.MAIN));
-			FindObjectsOfType<AudioListener>().All(audioSource => audioSource.enabled = true);
+			_ = UnityEngine.Object.FindObjectsByType<AudioListener>(FindObjectsInactive.Include, FindObjectsSortMode.None).All(audioSource => audioSource.enabled = true);
 			Destroy(gameObject);
-		}
+		}	
 	}
 }
